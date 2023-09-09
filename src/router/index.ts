@@ -1,25 +1,54 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import {createRouter, createWebHashHistory, RouteRecordRaw} from 'vue-router'
 
 const routes: Array<RouteRecordRaw> = [
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView
-  },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
-]
+        // 首页
+        {
+            path: '/',
+            name: 'index',
+            component: () => import(/* webpackChunkName: "about" */ '../pages/indexPage.vue')
+        },
+        // 用户列表页
+        {
+            path: '/user/list',
+            name: 'userList',
+            component: () => import(/* webpackChunkName: "about" */ '../components/userListPage.vue')
+        },
+        // 队伍列表页
+        {
+            path: '/team/list',
+            name: 'teamList',
+            component: () => import(/* webpackChunkName: "about" */ '../components/teamListPage.vue')
+        },
+        // 用户注册页
+        {
+            path: '/user/register',
+            name: 'userRegister',
+            component: () => import(/* webpackChunkName: "about" */ '../components/userRegisterPage.vue')
+        },
+        // 用户登录页
+        {
+            path: '/user/login',
+            name: 'userLogin',
+            component: () => import(/* webpackChunkName: "about" */ '../components/userLoginPage.vue')
+        },
+        // 个人信息页
+        {
+            path: '/user/info',
+            name: 'userInfo',
+            component: () => import(/* webpackChunkName: "about" */ '../components/userInfoPage.vue')
+        },
+        // 队伍信息页
+        {
+            path: '/team/info',
+            name: 'teamInfo',
+            component: () => import(/* webpackChunkName: "about" */ '../components/teamInfoPage.vue')
+        },
 
-const router = createRouter({
-  history: createWebHashHistory(),
-  routes
-})
 
-export default router
+    ],
+    router = createRouter({
+        history: createWebHashHistory(),
+        routes
+    });
+
+export default router;

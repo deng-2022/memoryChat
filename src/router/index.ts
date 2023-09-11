@@ -44,6 +44,13 @@ const routes: Array<RouteRecordRaw> = [
             component: () => import(/* webpackChunkName: "about" */ '../components/teamInfoPage.vue')
         },
 
+        // 聊天页面
+        {
+            path: '/chat/message',
+            name: 'chatMessage',
+            component: () => import(/* webpackChunkName: "about" */ '../components/chatPage.vue')
+        },
+
 
     ],
     router = createRouter({

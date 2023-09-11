@@ -53,7 +53,7 @@
               </a-card>
               <!--加入队伍-->
               <a-space :size="120">
-                <a-button size="large" type="primary" ghost>申请加入</a-button>
+                <a-button size="large" type="primary" ghost @click="joinTeam(item)">申请加入</a-button>
                 <a-button size="large" type="primary" ghost>队伍聊天</a-button>
               </a-space>
             </a-drawer>
@@ -66,6 +66,9 @@
 
 <script setup lang="ts">
 import {withDefaults, defineProps, ref} from "vue";
+import myAxios from "@/plugins/myAxios";
+import TeamInfo from "@/model/teamInfo";
+import {message} from "ant-design-vue";
 
 interface Props {
   teamInfoList: any[];
@@ -76,17 +79,27 @@ const props = withDefaults(defineProps<Props>(), {
   name: "TeamListPage"
 })
 
+
 // 抽屉展示
 const visible = ref({});
 const showDrawer = (itemId: any) => {
   visible.value[itemId] = true;
 }
-
+// 监听抽屉状态
 const afterVisibleChange = (bool: boolean) => {
   console.log('visible', bool);
 };
 
 const space = ref("2px");
+
+// 申请加入队伍
+const joinTeam = (teamInfo:TeamInfo) => {
+  myAxios.post("/team/join", teamInfo).then((res) => {
+    message.success("申请入队成功")
+  }).catch(() => {
+    console.log("加入失败")
+  });
+};
 </script>
 
 <style>

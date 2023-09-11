@@ -12,7 +12,8 @@ const user = {
     profile: String,
     tags: String,
     createTime: Date,
-    updateTime: Date
+    updateTime: Date,
+    isDelete:Number
 }
 
 export default user;

@@ -86,6 +86,7 @@
             </a-tab-pane>
             <a-tab-pane key="3" tab="聊天大厅">
               <!--聊天大厅-->
+              <ChatPage/>
             </a-tab-pane>
             <a-tab-pane key="4" tab="我的">
               <!--我的-->
@@ -107,11 +108,12 @@ import myAxios from "../plugins/myAxios";
 import {onMounted} from "vue";
 import {DownOutlined} from '@ant-design/icons-vue';
 import UserInfoPage from "@/components/userInfoPage.vue";
+import ChatPage from "@/components/chatPage.vue";
 
 const activeKey = ref('1');
 const userInfoList = ref([]);
 const teamInfoList = ref([]);
-const currentUser = ref();
+const currentUser = ref({});
 
 // 获取在线用户列表
 const getUserList = () => {
@@ -151,7 +153,7 @@ const handleTabChange = (key: any) => {
 
 // 获取当前登录用户
 const getCurrentUser = () => {
-  myAxios.get("/user/currentUser", {}).then((res) => {
+  myAxios.get("/user/currentUser", ).then((res) => {
     currentUser.value = res;
   }).catch(() => {
     console.log("获取用户列表失败")

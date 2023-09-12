@@ -25,6 +25,9 @@
 <script lang="ts" setup>
 import MyAxios from "@/plugins/myAxios";
 import {ref} from "vue";
+import {message} from "ant-design-vue";
+import router from "@/router";
+import currentUser from "@/model/currentUser";
 
 // 用户名 密码
 const userAccount = ref("");
@@ -36,9 +39,18 @@ const handleSubmit = () => {
     userAccount: userAccount.value,
     userPassword: userPassword.value,
   })
-      .then((values) => {
+      .then((res) => {
         // 处理表单提交逻辑
-        console.log('表单数据：', values);
+        // 1.登录成功
+        if (res) {
+          currentUser.value = res;
+          message.success("登录成功");
+          router.push('/')
+        }
+        // 2.登录失败
+        else {
+          console.log("登录失败")
+        }
       })
       .catch((error) => {
         console.error('表单验证失败：', error);

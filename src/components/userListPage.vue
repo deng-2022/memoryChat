@@ -74,10 +74,9 @@
 
 <script setup lang="ts">
 import {withDefaults, defineProps, ref} from "vue";
-import TeamInfo from "@/model/teamInfo";
 import myAxios from "@/plugins/myAxios";
 import {message} from "ant-design-vue";
-import userInfo from "@/model/userInfo";
+import userInfo from "@/type/userInfo";
 
 interface Props {
   userInfoList: any[];

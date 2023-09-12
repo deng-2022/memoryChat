@@ -67,7 +67,7 @@
 <script setup lang="ts">
 import {withDefaults, defineProps, ref} from "vue";
 import myAxios from "@/plugins/myAxios";
-import TeamInfo from "@/model/teamInfo";
+import TeamInfo from "@/type/teamInfo";
 import {message} from "ant-design-vue";
 
 interface Props {

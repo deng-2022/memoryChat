@@ -11,11 +11,6 @@ instance.interceptors.response.use(
     function (response) {
         // 2xx 范围内的状态码都会触发该函数。
         // 对响应数据做点什么
-        const data = response.data;
-        if (data.code === 0) {
-            return data.data;
-        }
-        console.error("request error", data);
         return response.data;
     },
     function (error) {

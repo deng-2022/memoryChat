@@ -9,9 +9,9 @@
         @back="() => $router.go(-1)"
     >
       <template #extra>
-        <div>
-          <div v-if="currentUser">
-            <!--用户头像-->
+        <div v-if="currentUser">
+          <div>
+            <!--登录用户信息-->
             <a-tooltip>
               <template #title>进入个人主页</template>
               <a>
@@ -22,33 +22,23 @@
             </a-tooltip>
           </div>
 
-          <div v-else>
-            <a-tooltip>
-              <template #title>去登录</template>
-              <router-link :to="{ path: '/user/login' }">未登录</router-link>
-            </a-tooltip>
+          <!--退出登录-->
+          <div>
+            <a-button type="primary" @click="showModal">退出登录</a-button>
+            <a-modal v-model:visible="visible" title="警告" @ok="logout">
+              <p>您确定要退出登录吗</p>
+            </a-modal>
           </div>
         </div>
-        <!--设置下拉菜单-->
-        <a-dropdown>
-          <a class="ant-dropdown-link" @click.prevent>
-            设置
-            <DownOutlined/>
-          </a>
-          <template #overlay>
-            <a-menu>
-              <a-menu-item>
-                <a href="javascript:;">1st menu item</a>
-              </a-menu-item>
-              <a-menu-item>
-                <a href="javascript:;">2nd menu item</a>
-              </a-menu-item>
-              <a-menu-item>
-                <a href="javascript:;">3rd menu item</a>
-              </a-menu-item>
-            </a-menu>
-          </template>
-        </a-dropdown>
+
+        <div v-else>
+          <router-link :to="{ path: '/user/login' }">
+            <a-button type="primary" @click="showModal">去登录</a-button>
+          </router-link>
+        </div>
+
+        <!--用户操作-->
+
       </template>
     </a-page-header>
     <br/>
@@ -106,14 +96,15 @@ import UserListPage from "@/components/userListPage.vue";
 import TeamListPage from "@/components/teamListPage.vue";
 import myAxios from "../plugins/myAxios";
 import {onMounted} from "vue";
-import {DownOutlined} from '@ant-design/icons-vue';
 import UserInfoPage from "@/components/userInfoPage.vue";
 import ChatPage from "@/components/chatPage.vue";
+import {message} from "ant-design-vue";
+import getCurrentUser from "@/service/getCurrentUser";
+import currentUser from "@/model/currentUser";
 
 const activeKey = ref('1');
 const userInfoList = ref([]);
 const teamInfoList = ref([]);
-const currentUser = ref({});
 
 // 获取在线用户列表
 const getUserList = () => {
@@ -123,7 +114,7 @@ const getUserList = () => {
       pageSize: 10
     }
   }).then((res) => {
-    userInfoList.value = res.records;
+    userInfoList.value = res.data.records;
   }).catch(() => {
     console.log("获取用户列表失败")
   });
@@ -136,7 +127,7 @@ const getTeamList = (isSecret: any) => {
       isSecret: isSecret,
     }
   }).then((res) => {
-    teamInfoList.value = res.records;
+    teamInfoList.value = res.data.records;
   });
 }
 
@@ -151,14 +142,6 @@ const handleTabChange = (key: any) => {
   }
 }
 
-// 获取当前登录用户
-const getCurrentUser = () => {
-  myAxios.get("/user/currentUser", ).then((res) => {
-    currentUser.value = res;
-  }).catch(() => {
-    console.log("获取用户列表失败")
-  });
-}
 
 // 钩子函数
 onMounted(() => {
@@ -176,6 +159,24 @@ watchEffect(() => {
     getTeamList(false);
   }
 });
+
+// 注销警告状态
+const visible = ref<boolean>(false);
+// 注销警告展示
+const showModal = () => {
+  visible.value = true;
+};
+// 退出登录
+const logout = () => {
+  myAxios.post("/user/logout",).then(() => {
+    currentUser.value = {}
+    message.success("退出登录成功");
+    location.reload(); // 刷新页面
+  }).catch(() => {
+    message.error("退出登录失败");
+  });
+  visible.value = false;
+};
 </script>
 
 <style>

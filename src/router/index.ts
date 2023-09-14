@@ -52,10 +52,9 @@ const routes: Array<RouteRecordRaw> = [
         },
 
 
-    ],
-    router = createRouter({
+    ];
+    const router = createRouter({
         history: createWebHashHistory(),
         routes
     });
-
 export default router;

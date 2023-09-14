@@ -128,15 +128,17 @@ const props = withDefaults(defineProps<Props>(), {
   name: "UserPage"
 })
 
-// 监听Tab标签变化
-const handleTabChange = (key: any) => {
-  // 根据选项卡的key发送不同的请求
+// 监听Tab标签变化 根据选项卡的key发送不同的请求
+const handleTabChange = (key:any) => {
+  // 获取已加入的队伍
   if (key === "1") {
     getJoinedTeam();
   }
+  // 获取已创建的队伍
   if (key === "2") {
     getCreatedTeam();
   }
+  // 获取好友
   if (key === "3") {
     getFriendList();
   }

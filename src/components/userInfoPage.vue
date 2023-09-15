@@ -72,7 +72,7 @@
           <template #renderItem="{ item }">
             <a-list-item>
               <template #actions>
-                <a-button size="large" type="primary" ghost>私聊</a-button>
+                <a-button size="large" type="primary" ghost @click="goToTab">私聊</a-button>
               </template>
               <a-list-item-meta
                   :description="item.profile"
@@ -111,6 +111,7 @@
 import {withDefaults, defineProps, ref} from "vue";
 import myAxios from "@/plugins/myAxios";
 import currentUser from "@/model/currentUser";
+import router from "@/router";
 
 // 好友列表
 const friendList = ref();
@@ -182,6 +183,11 @@ const getJoinedTeam = () => {
 };
 
 const activeKey = ref('1');
+
+const goToTab = ()=>{
+    activeKey.value = '2'; // 切换到目标tab页
+    this.$refs.myTabs.activeKey = '2'; // 更新组件中的activeKey属性
+}
 </script>
 
 <style>

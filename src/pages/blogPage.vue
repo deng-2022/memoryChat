@@ -44,47 +44,47 @@
   </a-affix>
 
   <div>
-<!--    <a-row :gutter="[16,16]">-->
-<!--      <a-col :span="5" :push="1">-->
-<!--        <a-card class="infoList" style="width: 220px;height: 400px">-->
-<!--          <template #cover>-->
-<!--            <img alt="example"-->
-<!--                 src="http://rza7uevjr.hn-bkt.clouddn.com/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/bradge.jpg?e=1694248940&token=7EF9y7gF9x4urpXC9ka8c_DxTxDTfH_jYaTCfmkr:Tzl7PgQpltWiFPi5tyBoeC9DISQ="/>-->
-<!--          </template>-->
-<!--          <a-card-meta title="Europe Street beat">-->
-<!--            <template #description>www.instagram.com</template>-->
-<!--          </a-card-meta>-->
-<!--        </a-card>-->
-<!--      </a-col>-->
+    <!--    <a-row :gutter="[16,16]">-->
+    <!--      <a-col :span="5" :push="1">-->
+    <!--        <a-card class="infoList" style="width: 220px;height: 400px">-->
+    <!--          <template #cover>-->
+    <!--            <img alt="example"-->
+    <!--                 src="http://rza7uevjr.hn-bkt.clouddn.com/%E5%8A%A8%E6%BC%AB%E6%8F%92%E7%94%BB/bradge.jpg?e=1694248940&token=7EF9y7gF9x4urpXC9ka8c_DxTxDTfH_jYaTCfmkr:Tzl7PgQpltWiFPi5tyBoeC9DISQ="/>-->
+    <!--          </template>-->
+    <!--          <a-card-meta title="Europe Street beat">-->
+    <!--            <template #description>www.instagram.com</template>-->
+    <!--          </a-card-meta>-->
+    <!--        </a-card>-->
+    <!--      </a-col>-->
 
-<!--      <a-col :span="12">-->
-        <a-card class="infoList" style="width: 100%;">
-          <a-tabs v-model:activeKey="activeKey" class="centered-tabs" @change="handleTabChange">
-            <a-tab-pane key="1" tab="用户列表">
-              <!--在线用户列表-->
-              <UserListPage :userInfo-list="userInfoList"/>
-            </a-tab-pane>
-            <a-tab-pane key="2" tab="队伍列表">
-              <!--在线队伍列表-->
-              <!--切换队伍-->
-              <div>
-                <span>显示加密队伍</span>
-                <a-switch v-model:checked="checked"/>
-              </div>
-              <TeamListPage :teamInfo-list="teamInfoList"/>
-            </a-tab-pane>
-            <a-tab-pane key="3" tab="聊天大厅">
-              <!--聊天大厅-->
-              <ChatPage/>
-            </a-tab-pane>
-            <a-tab-pane key="4" tab="我的">
-              <!--我的-->
-              <UserInfoPage :user-info="currentUser"/>
-            </a-tab-pane>
-          </a-tabs>
-        </a-card>
-<!--      </a-col>-->
-<!--    </a-row>-->
+    <!--      <a-col :span="12">-->
+    <a-card class="infoList" style="width: 100%;">
+      <a-tabs v-model:activeKey="activeKey" class="centered-tabs" @change="handleTabChange">
+        <a-tab-pane key="1" tab="用户列表">
+          <!--在线用户列表-->
+          <UserListPage :userInfo-list="userInfoList"/>
+        </a-tab-pane>
+        <a-tab-pane key="2" tab="队伍列表">
+          <!--在线队伍列表-->
+          <!--切换队伍-->
+          <div>
+            <span>显示加密队伍</span>
+            <a-switch v-model:checked="checked"/>
+          </div>
+          <TeamListPage :teamInfo-list="teamInfoList"/>
+        </a-tab-pane>
+        <a-tab-pane key="3" tab="聊天大厅">
+          <!--聊天大厅-->
+          <ChatPage/>
+        </a-tab-pane>
+        <a-tab-pane key="4" tab="我的">
+          <!--我的-->
+          <UserInfoPage :user-info="currentUser"/>
+        </a-tab-pane>
+      </a-tabs>
+    </a-card>
+    <!--      </a-col>-->
+    <!--    </a-row>-->
   </div>
 
 </template>

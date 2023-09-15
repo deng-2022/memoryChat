@@ -11,6 +11,7 @@
         <a-button @click="closeWebSocket()">关闭WebSocket连接</a-button>
         <hr/>
         <div id="message">{{ retMes }}</div>
+
         <a-list item-layout="horizontal" :data-source="chatMsgList">
           <template #renderItem="{ item }">
             <a-list-item>
@@ -22,6 +23,7 @@
           </template>
         </a-list>
       </a-tab-pane>
+
       <a-tab-pane key="2" tab="测试2">
         <a-list item-layout="horizontal" :data-source="chatMsgList">
           <template #renderItem="{ item }">
@@ -34,8 +36,27 @@
           </template>
         </a-list>
       </a-tab-pane>
+
       <a-tab-pane key="3" tab="聊天3">
+        <a-list item-layout="horizontal" :data-source="chatMsgList" class="chatMsgList">
+          <template #renderItem="{ item }">
+            <a-list-item>
+              <a-list-item-meta
+                  :description="item.sendTime"
+              >
+                <template #title>
+                  <span>{{ item.content }}</span>
+                </template>
+
+                <template #avatar>
+                  <a-avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>
+                </template>
+              </a-list-item-meta>
+            </a-list-item>
+          </template>
+        </a-list>
       </a-tab-pane>
+
       <a-tab-pane key="4" tab="聊天4">
       </a-tab-pane>
     </a-tabs>
@@ -46,6 +67,8 @@
 import {ref} from "vue";
 import currentUser from "@/model/currentUser";
 import myAxios from "@/plugins/myAxios";
+import router from "@/router";
+
 // 服务器 消息提示
 const retMes = ref("");
 // 当前登录用户id
@@ -59,22 +82,21 @@ const activeKey = ref('1');
 const mesInput = ref("");
 // 聊天记录 消息列表
 const chatMsgList = ref([])
+
 // 监听Tab标签变化 根据选项卡的key发送不同的请求
 const handleTabChange = (key) => {
-  // 获取已加入的队伍
   if (key === "1") {
     // alert(key)
   }
-  // 获取聊天记录
   if (key === "2") {
     getMesList();
-    // 获取好友
-    if (key === "3") {
-      // alert(key)
-    }
+  }
+  if (key === "3") {
+    // alert(key)
   }
 }
 
+// 更新消息列表
 const getMesList = () => {
   myAxios.get("/chat/list", {
     params: {
@@ -87,13 +109,13 @@ const getMesList = () => {
   });
 }
 
-
 const initMessage = {
   senderId: "",
   receiverId: "",
   content: "",
   sendTime: ""
 }
+
 // 服务器转发回的消息(客户端收到的消息)
 const receiveMsg = ref(initMessage)
 
@@ -118,17 +140,10 @@ function openSocket() {
     };
     //获得消息事件(获得服务端转发的消息)
     socket.onmessage = function (msg) {
-      // 封装返回消息
-      if (typeof (msg) === String) {
-        receiveMsg.value = JSON.parse(msg.data);
-      }
-      receiveMsg.value = msg.data;
-      // 解构
-      const receiverId = receiveMsg.value.receiverId;
-      const content = receiveMsg.value.content;
-      // 是否属于我的消息
-      if (receiverId === currentUserId) {
-        setMessage("服务端回应: " + content + "发给: " + receiverId);
+      receiveMsg.value = JSON.parse(msg.data)
+      // 是发给自己的消息 更新聊天记录
+      if (currentUserId === receiveMsg.value.receiverId) {
+        getMesList();
       }
     };
     //关闭事件
@@ -155,7 +170,7 @@ function sendMessage() {
 
     sendMsg.value = JSON.stringify({
       senderId: currentUserId,
-      receiverId: "1657284893320364034",
+      receiverId: "1657284844934873090",
       content: mesInput.value,
       sendTime: new Date()
     });
@@ -186,4 +201,12 @@ function closeWebSocket() {
 window.onbeforeunload = function () {
   closeWebSocket();
 };
+
 </script>
+
+<style>
+.chatMsgList {
+  overflow-y: scroll;
+  height: 300px;
+}
+</style>

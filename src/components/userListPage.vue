@@ -6,6 +6,7 @@
           item-layout="horizontal"
           :grid="{ gutter: 16, xs: 1, sm: 2, md: 4, lg: 4, xl: 6, xxl: 5 }"
           :data-source="props.userInfoList"
+          class="userList"
       >
         <template #renderItem="{ item }">
           <a-list-item>
@@ -112,6 +113,11 @@ const space = ref("2px");
 </script>
 
 <style>
+.userList {
+  overflow-y: scroll;
+  height: 600px;
+}
+
 .userInfo {
   width: 200px;
   height: 350px;

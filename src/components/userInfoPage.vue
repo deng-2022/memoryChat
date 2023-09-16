@@ -72,7 +72,7 @@
           <template #renderItem="{ item }">
             <a-list-item>
               <template #actions>
-                <a-button size="large" type="primary" ghost @click="goToTab">私聊</a-button>
+                <a-button size="large" type="primary" ghost @click="goToTab(item)">私聊</a-button>
               </template>
               <a-list-item-meta
                   :description="item.profile"
@@ -114,7 +114,7 @@ import currentUser from "@/model/currentUser";
 import router from "@/router";
 
 // 好友列表
-const friendList = ref();
+const friendList = ref([]);
 // 我创建的队伍
 const createdTeamList = ref();
 // 我加入的队伍
@@ -130,7 +130,7 @@ const props = withDefaults(defineProps<Props>(), {
 })
 
 // 监听Tab标签变化 根据选项卡的key发送不同的请求
-const handleTabChange = (key:any) => {
+const handleTabChange = (key: any) => {
   // 获取已加入的队伍
   if (key === "1") {
     getJoinedTeam();
@@ -155,7 +155,10 @@ const getFriendList = () => {
 };
 
 // 登录用户id
-const userId = currentUser.value.id;
+let userId = "";
+if (currentUser) {
+  userId = currentUser.value.id;
+}
 // 申请添加好友
 const getCreatedTeam = () => {
   myAxios.get("/team/created", {
@@ -184,9 +187,15 @@ const getJoinedTeam = () => {
 
 const activeKey = ref('1');
 
-const goToTab = ()=>{
-    activeKey.value = '2'; // 切换到目标tab页
-    this.$refs.myTabs.activeKey = '2'; // 更新组件中的activeKey属性
+// 监听页面变化
+const goToTab = (item: any) => {
+  router.push({
+    name: "chat",
+    path: "/chat",
+    query: {
+      chatTabName: item.id,
+    }
+  })
 }
 </script>
 

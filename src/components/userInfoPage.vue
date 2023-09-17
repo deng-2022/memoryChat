@@ -112,6 +112,8 @@ import {withDefaults, defineProps, ref} from "vue";
 import myAxios from "@/plugins/myAxios";
 import currentUser from "@/model/currentUser";
 import router from "@/router";
+import {onMounted} from "vue/dist/vue";
+import getCurrentUser from "@/service/getCurrentUser";
 
 // 好友列表
 const friendList = ref([]);
@@ -159,6 +161,7 @@ let userId = "";
 if (currentUser) {
   userId = currentUser.value.id;
 }
+
 // 申请添加好友
 const getCreatedTeam = () => {
   myAxios.get("/team/created", {
@@ -197,6 +200,7 @@ const goToTab = (item: any) => {
     }
   })
 }
+
 </script>
 
 <style>

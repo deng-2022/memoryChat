@@ -11,24 +11,29 @@
       <template #extra>
         <div v-if="currentUser">
           <div>
+            <a-button type="primary" ghost @click="goToBlog">前往博客页</a-button>
             <!--登录用户信息-->
-            <a-tooltip>
-              <template #title>进入个人主页</template>
-              <a>
-                <a-avatar class="infoList" size="large"
-                          :src="currentUser.avatarUrl"/>
-              </a>
-              <span>{{ currentUser.userAccount }}</span>
-            </a-tooltip>
+            <span style="margin-left: 13px">
+                <a-tooltip>
+                <template #title>进入个人主页</template>
+                <a>
+                  <a-avatar size="large"
+                            :src="currentUser.avatarUrl"/>
+                </a>
+                <span>{{ currentUser.userAccount }}</span>
+              </a-tooltip>
+            </span>
+
+            <!--退出登录-->
+            <span style="margin-left: 13px">
+              <a-button type="primary" ghost @click="showModal">退出登录</a-button>
+              <a-modal v-model:visible="visible" title="警告" @ok="logout">
+                <p>您确定要退出登录吗</p>
+              </a-modal>
+              </span>
           </div>
 
-          <!--退出登录-->
-          <div>
-            <a-button type="primary" @click="showModal">退出登录</a-button>
-            <a-modal v-model:visible="visible" title="警告" @ok="logout">
-              <p>您确定要退出登录吗</p>
-            </a-modal>
-          </div>
+
         </div>
 
         <div v-else>
@@ -36,7 +41,6 @@
             <a-button type="primary" @click="showModal">去登录</a-button>
           </router-link>
         </div>
-
         <!--用户操作-->
       </template>
     </a-page-header>
@@ -65,10 +69,8 @@
             <div class="inputWindow">
               <hr/>
               <a-input v-model:value="mesInput" placeholder="Basic usage"/>
-              <a-button @click="sendMessage">发送消息</a-button>
+              <a-button @click="sendMessage" type="primary">发送消息</a-button>
               <hr/>
-              <a-button @click="openSocket()">连接socket</a-button>
-              <a-button @click="closeWebSocket()">关闭WebSocket连接</a-button>
               <div id="message">{{ retMes }}</div>
             </div>
           </div>
@@ -83,13 +85,15 @@ import {onMounted, ref} from "vue";
 import currentUser from "@/model/currentUser";
 import myAxios from "@/plugins/myAxios";
 import {useRoute} from 'vue-router';
+import {notification} from "ant-design-vue";
+import getCurrentUser from "@/service/getCurrentUser";
 
 const route = useRoute();
 const chatTabName = ref({});
 // 服务器 消息提示
 const retMes = ref("");
 // 当前登录用户id
-const currentUserId = currentUser.value.id;
+let currentUserId = currentUser.value.id;
 // socket
 let socket;
 
@@ -100,21 +104,21 @@ const activeKey = ref(chatTabName.value.chatTabName);
 const mesInput = ref("");
 // 聊天记录 消息列表
 const chatMsgList = ref([])
+// 当前通信用户id
+const chatUser = ref();
 
 // 监听Tab标签变化 根据选项卡的key发送不同的请求
 const handleTabChange = (key) => {
+  chatUser.value = key;
   getMesList(key);
 }
 
-// 当前通信用户id
-const chatUser = ref();
 // 更新消息列表
 const getMesList = (key) => {
-  chatUser.value = key;
   myAxios.get("/chat/list", {
     params: {
       senderId: currentUserId,
-      receiverId: chatUser.value,
+      receiverId: key,
     }
   }).then((res) => {
     chatMsgList.value = res.data;
@@ -134,44 +138,63 @@ const initMessage = {
 const receiveMsg = ref(initMessage)
 
 // 连接服务器
-function openSocket() {
-  // 实时更新聊天记录
-  getMesList();
+function openSocket(Id) {
   if (typeof WebSocket == "undefined") {
     console.log("您的浏览器不支持WebSocket");
   } else {
     console.log("您的浏览器支持WebSocket");
+
     //指定要连接的服务器地址与端口
-    const socketUrl = `ws://localhost:8081/api/websocket/${currentUserId}`;
+    const socketUrl = `ws://localhost:8081/api/websocket/${Id}`;
     if (socket != null) {
       socket.close();
       socket = null;
     }
+
     // 实例化WebSocket对象，建立连接
     socket = new WebSocket(socketUrl);
+
     //打开事件
     socket.onopen = function () {
       console.log("websocket已打开");
       setMessage("websocket已打开");
     };
+
     //获得消息事件(获得服务端转发的消息)
     socket.onmessage = function (msg) {
+      // 实时更新聊天记录
+      getMesList(chatUser.value);
       receiveMsg.value = JSON.parse(msg.data)
       // 是发给自己的消息 更新聊天记录
       if (currentUserId === receiveMsg.value.receiverId) {
+        openNotification()
         getMesList(chatUser.value);
       }
     };
+
     //关闭事件
     socket.onclose = function () {
       console.log("websocket已关闭");
       setMessage("websocket已关闭");
     };
+
     //发生了错误事件
     socket.onerror = function () {
       console.log("websocket发生了错误");
     };
   }
+}
+
+// 弹出收到消息提示
+const openNotification = () => {
+  notification.open({
+    message: '消息通知',
+    description:
+        '你收到了一条新消息, 请注意查收',
+    onClick: () => {
+      console.log('Notification Clicked!');
+    },
+  });
 }
 
 // 客户端发出的消息
@@ -186,7 +209,7 @@ function sendMessage() {
 
     sendMsg.value = JSON.stringify({
       senderId: currentUserId,
-      receiverId: chatTabName.value.chatTabName,
+      receiverId: chatUser.value,
       content: mesInput.value,
       sendTime: new Date()
     });
@@ -218,22 +241,27 @@ window.onbeforeunload = function () {
   closeWebSocket();
 };
 
-
 // 钩子函数
 onMounted(() => {
+  getCurrentUser();
+  currentUserId = currentUser.value.id;
+  // 主动连接
+  openSocket(currentUser.value.id);
   // 获取接收者id
   chatTabName.value = route.query
   console.log("参数:" + chatTabName.value.chatTabName)
   activeKey.value = chatTabName.value.chatTabName;
   // 获取好友列表信息
   chatWindowList();
+  // 聊天记录
+  getMesList( chatTabName.value.chatTabName)
 })
 
 // 好友列表
 const friendList = ref([]);
 // 获取好友列表信息
 const chatWindowList = () => {
-  myAxios.get("/friends/list",).then((res) => {
+  myAxios.get("/friends/list").then((res) => {
     friendList.value = res.data.records;
   }).catch(() => {
     console.log("加入失败")

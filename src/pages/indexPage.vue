@@ -4,31 +4,36 @@
       <!--页头-->
       <a-page-header
           class="demo-page-header"
-          style="border: 1px solid rgb(235, 237, 240);background: white"
+          style="border: 1px solid rgb(235, 237, 240);"
           title="Memory畅聊社区"
           sub-title="组队交友"
       >
         <template #extra>
           <div v-if="currentUser">
             <div>
+              <a-button type="primary" ghost @click="goToBlog">前往博客页</a-button>
               <!--登录用户信息-->
-              <a-tooltip>
+              <span style="margin-left: 13px">
+                <a-tooltip>
                 <template #title>进入个人主页</template>
                 <a>
-                  <a-avatar class="infoList" size="large"
+                  <a-avatar size="large"
                             :src="currentUser.avatarUrl"/>
                 </a>
                 <span>{{ currentUser.userAccount }}</span>
               </a-tooltip>
-            </div>
+            </span>
 
-            <!--退出登录-->
-            <div>
-              <a-button type="primary" @click="showModal">退出登录</a-button>
+              <!--退出登录-->
+              <span style="margin-left: 13px">
+              <a-button type="primary" ghost @click="showModal">退出登录</a-button>
               <a-modal v-model:visible="visible" title="警告" @ok="logout">
                 <p>您确定要退出登录吗</p>
               </a-modal>
+              </span>
             </div>
+
+
           </div>
 
           <div v-else>
@@ -36,29 +41,56 @@
               <a-button type="primary" @click="showModal">去登录</a-button>
             </router-link>
           </div>
-
           <!--用户操作-->
         </template>
       </a-page-header>
       <br/>
     </a-affix>
 
+
+    <!--主页内容-->
     <div>
       <a-row :gutter="[16,16]">
+        <!--推荐用户列表-->
         <a-col :span="5" :push="1">
-          <a-card class="infoList" style="width: 220px;height: 400px">
-            <template #cover>
-              <img alt="example"
-                   src="https://memory-1318574676.cos.ap-nanjing.myqcloud.com/memory-chat/cat3.jpg?q-sign-algorithm=sha1&q-ak=AKID_30LRemOGWipTSYklSI21gZDoQz9DBD2WMOorBwaNbRSrCyJutIkHZnmn6teuvGY&q-sign-time=1694832694;1694836294&q-key-time=1694832694;1694836294&q-header-list=host&q-url-param-list=ci-process&q-signature=bfe197b2440c06369b82f95eb2ae2219e17394d8&x-cos-security-token=bBfp2RyIi3xpLBk6FztpjwRg65k02OLa3bcaea542a244f819058117bf5f36ec4HnQt_M3GYeyaQgqcorJa0l0ksJt795J7brVOTGEZO7EQYA2p8mjH5mjciERlEmuYaNR496MF75mxYfXEIjudDG_QWi9LEsAwjGuYPSvpKMQNsmdKRwJZnfrXrzJ8C5WVUUr9F0iZEkQASXNwqel66qgtrS7DLXWrk19aDfspeUeWXRw5McInaUipE-QfsB2-&ci-process=originImage"/>
-            </template>
-            <a-card-meta title="本周推荐用户">
-              <template #description></template>
-            </a-card-meta>
-          </a-card>
+          <!--拿到数据-->
+          <template v-if="matchUserList && matchUserList.length > 0">
+            <a-card style="width: 240px">
+              <a-card-meta title="每周推荐用户">
+              </a-card-meta>
+              <a-list
+                  item-layout="horizontal"
+                  :grid="{ gutter: 16, xs: 1, sm: 2, md: 4, lg: 4, xl: 6, xxl: 1 }"
+                  :data-source="matchUserList"
+                  class="userList"
+                  style="width: 200px"
+              >
+                <template #renderItem="{ item }">
+                  <a-list-item>
+                    <a-card hoverable class="matchUserInfo">
+                      <template #cover>
+                        <img class="matchUserAvatar" alt="example" :src="item.avatarUrl"/>
+                      </template>
+
+                      <a-card-meta :title=" item.username">
+                        <template #description>{{ item.profile }}</template>
+                      </a-card-meta>
+                    </a-card>
+                  </a-list-item>
+                </template>
+              </a-list>
+            </a-card>
+
+          </template>
+          <!--获取数据失败-->
+          <template v-else>
+            <a-empty/>
+          </template>
         </a-col>
 
+        <!--在线用户列表-->
         <a-col :span="10">
-          <a-card class="infoList" style="width: 180%;">
+          <a-card class="infoList">
             <a-tabs v-model:activeKey="activeKey" class="centered-tabs" @change="handleTabChange">
               <!--在线用户列表-->
               <a-tab-pane key="1" tab="用户列表">
@@ -99,6 +131,7 @@ import UserInfoPage from "@/components/userInfoPage.vue";
 import {message} from "ant-design-vue";
 import getCurrentUser from "@/service/getCurrentUser";
 import currentUser from "@/model/currentUser";
+import router from "@/router";
 
 const activeKey = ref('1');
 const userInfoList = ref([]);
@@ -129,6 +162,21 @@ const getTeamList = (isSecret: any) => {
   });
 }
 
+// 推荐用户数量
+const matchNum = ref(5)
+// 推荐用户列表
+const matchUserList = ref([]);
+// 获取推荐用户
+const getMatchUserList = () => {
+  myAxios.get("/user/match", {
+    params: {
+      matchNum: matchNum.value
+    }
+  }).then((res) => {
+    matchUserList.value = res.data.records;
+  });
+}
+
 // 监听Tab标签变化
 const handleTabChange = (key: any) => {
   // 根据选项卡的key发送不同的请求
@@ -140,11 +188,14 @@ const handleTabChange = (key: any) => {
   }
 }
 
-
 // 钩子函数
 onMounted(() => {
+  // 用户列表
   getUserList();
+  // 当前登录用户信息
   getCurrentUser();
+  // 推荐用户列表
+  getMatchUserList();
 })
 
 // 开关 队伍状态改变
@@ -175,14 +226,37 @@ const logout = () => {
   });
   visible.value = false;
 };
+
+const goToBlog = () => {
+  router.push("/blog")
+}
 </script>
 
 <style>
-/*.index {*/
-/*  background: deepskyblue;*/
-/*}*/
+.demo-page-header{
+  position: relative;
+}
+.demo-page-header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(5px);
+}
+
+.index {
+  background: #eea2a4;
+}
+
+.matchUserInfo {
+  width: 150px;
+}
 
 .infoList {
+  width: 180%;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 </style>

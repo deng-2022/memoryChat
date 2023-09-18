@@ -5,7 +5,6 @@ import currentUser from "@/model/currentUser";
 const getCurrentUser = () => {
     myAxios.get("/user/currentUser",).then((res) => {
         currentUser.value = res.data;
-
     }).catch(() => {
         console.log("获取用户列表失败")
     });

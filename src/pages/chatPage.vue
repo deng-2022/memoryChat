@@ -1,19 +1,28 @@
 <template>
-  <a-affix :offset-top="0">
-    <!--页头-->
-    <a-page-header
-        class="demo-page-header"
-        style="border: 1px solid rgb(235, 237, 240);background: white"
-        title="Memory畅聊社区"
-        sub-title="聊天大厅"
-        @back="() => $router.go(-1)"
-    >
-      <template #extra>
-        <div v-if="currentUser">
-          <div>
-            <a-button type="primary" ghost @click="goToBlog">前往博客页</a-button>
-            <!--登录用户信息-->
-            <span style="margin-left: 13px">
+  <div class="chat">
+    <a-affix :offset-top="0">
+      <!--页头-->
+      <a-page-header
+          class="demo-page-header"
+          style="border: 1px solid rgb(235, 237, 240); background: rgba(255, 255, 255, 0.5)"
+          title="Memory畅聊社区"
+          sub-title="聊天大厅"
+          @back="() => $router.go(-1)"
+      >
+        <template #extra>
+          <div class="goToPage1">
+            <EyeTwoTone class="icon" style="font-size: 25px;"/>
+            <span><a @click="goToCenter">用户中心</a></span>
+          </div>
+
+          <div class="goToPage2">
+            <FireTwoTone class="icon" style="font-size: 25px;"/>
+            <span><a @click="goToBlog">博客社区</a></span>
+          </div>
+          <div v-if="currentUser">
+            <div>
+              <!--登录用户信息-->
+              <span style="margin-left: 13px">
                 <a-tooltip>
                 <template #title>进入个人主页</template>
                 <a>
@@ -24,60 +33,60 @@
               </a-tooltip>
             </span>
 
-            <!--退出登录-->
-            <span style="margin-left: 13px">
+              <!--退出登录-->
+              <span style="margin-left: 13px">
               <a-button type="primary" ghost @click="showModal">退出登录</a-button>
               <a-modal v-model:visible="visible" title="警告" @ok="logout">
                 <p>您确定要退出登录吗</p>
               </a-modal>
-              </span>
-          </div>
-
-
-        </div>
-
-        <div v-else>
-          <router-link :to="{ path: '/user/login' }">
-            <a-button type="primary" @click="showModal">去登录</a-button>
-          </router-link>
-        </div>
-        <!--用户操作-->
-      </template>
-    </a-page-header>
-    <br/>
-  </a-affix>
-
-  <div>
-    <a-card class="chatList" style="width: 100%;">
-      <a-tabs v-model:activeKey="activeKey" tab-position="left" @change="handleTabChange">
-        <a-tab-pane v-model:activeKey="activeKey" v-for="tab in friendList" :key="tab.id" :tab="tab.username"
-                    @click="handleTabChange">
-          <div class="chatWindow">
-            <div class="msgWindow">
-              <a-list item-layout="horizontal" :data-source="chatMsgList">
-                <template #renderItem="{ item }">
-                  <a-list-item>
-                    <a-list-item-meta
-                        :description="item.content"
-                    >
-                    </a-list-item-meta>
-                  </a-list-item>
-                </template>
-              </a-list>
-            </div>
-
-            <div class="inputWindow">
-              <hr/>
-              <a-input v-model:value="mesInput" placeholder="Basic usage"/>
-              <a-button @click="sendMessage" type="primary">发送消息</a-button>
-              <hr/>
-              <div id="message">{{ retMes }}</div>
+             </span>
             </div>
           </div>
-        </a-tab-pane>
-      </a-tabs>
-    </a-card>
+
+          <div v-else>
+            <router-link :to="{ path: '/user/login' }">
+              <a-button type="primary" @click="showModal">去登录</a-button>
+            </router-link>
+          </div>
+          <!--用户操作-->
+        </template>
+      </a-page-header>
+      <br/>
+    </a-affix>
+
+    <div>
+      <a-card class="chatList" style="width: 100%;">
+        <a-tabs v-model:activeKey="activeKey" tab-position="left" @change="handleTabChange">
+          <a-tab-pane v-model:activeKey="activeKey" v-for="tab in friendList" :key="tab.id" :tab="tab.username"
+                      @click="handleTabChange">
+            <div class="chatWindow">
+              <div class="msgWindow">
+                <a-list item-layout="horizontal" :data-source="chatMsgList">
+                  <template #renderItem="{ item }">
+                    <a-list-item>
+                      <a-list-item-meta
+                          :description="item.content"
+                      >
+                      </a-list-item-meta>
+                    </a-list-item>
+                  </template>
+                </a-list>
+              </div>
+
+              <div class="inputWindow">
+                <hr/>
+                <a-input v-model:value="mesInput" placeholder="Basic usage"/>
+                <a-button @click="sendMessage" type="primary">发送消息</a-button>
+                <hr/>
+                <div id="message">{{ retMes }}</div>
+              </div>
+            </div>
+          </a-tab-pane>
+        </a-tabs>
+      </a-card>
+    </div>
   </div>
+
 </template>
 
 <script setup>
@@ -87,6 +96,8 @@ import myAxios from "@/plugins/myAxios";
 import {useRoute} from 'vue-router';
 import {notification} from "ant-design-vue";
 import getCurrentUser from "@/service/getCurrentUser";
+import {EyeTwoTone, FireTwoTone} from '@ant-design/icons-vue';
+import router from "@/router";
 
 const route = useRoute();
 const chatTabName = ref({});
@@ -254,7 +265,7 @@ onMounted(() => {
   // 获取好友列表信息
   chatWindowList();
   // 聊天记录
-  getMesList( chatTabName.value.chatTabName)
+  getMesList(chatTabName.value.chatTabName)
 })
 
 // 好友列表
@@ -269,9 +280,49 @@ const chatWindowList = () => {
   console.log(friendList.value)
 }
 
+// 前往博客社区
+const goToBlog = () => {
+  router.push("/blog")
+}
+
+// 前往用户中心
+const goToCenter = () => {
+  router.push("/")
+}
 </script>
 
 <style>
+.demo-page-header {
+  position: relative;
+  backdrop-filter: blur(5px);
+}
+
+.goToPage1, .goToPage2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 32px
+}
+
+.goToPage1 {
+  left: 300px;
+}
+
+.goToPage2 {
+  left: 400px;
+}
+
+.icon {
+  padding-right: 5px;;
+}
+
+.chat {
+  background-image: linear-gradient( 135deg, #70F570 10%, #49C628 100%);
+  height: 2000px;
+}
+
+
 .chatList {
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }

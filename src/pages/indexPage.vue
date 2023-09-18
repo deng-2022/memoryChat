@@ -1,17 +1,26 @@
 <template>
-  <div class="index">
+  <div class="center">
     <a-affix :offset-top="0">
       <!--页头-->
       <a-page-header
           class="demo-page-header"
-          style="border: 1px solid rgb(235, 237, 240);"
+          style="border: 1px solid rgb(235, 237, 240); background: rgba(255, 255, 255, 0.5)"
           title="Memory畅聊社区"
-          sub-title="组队交友"
+          sub-title="用户中心"
+          @back="() => $router.go(-1)"
       >
         <template #extra>
+          <div class="goToPage1">
+            <FireTwoTone class="icon" style="font-size: 25px;"/>
+            <span><a @click="goToBlog">博客社区</a></span>
+          </div>
+
+          <div class="goToPage2">
+            <ApiTwoTone class="icon" style="font-size: 25px;"/>
+            <span><a @click="goToChat">聊天大厅</a></span>
+          </div>
           <div v-if="currentUser">
             <div>
-              <a-button type="primary" ghost @click="goToBlog">前往博客页</a-button>
               <!--登录用户信息-->
               <span style="margin-left: 13px">
                 <a-tooltip>
@@ -30,10 +39,8 @@
               <a-modal v-model:visible="visible" title="警告" @ok="logout">
                 <p>您确定要退出登录吗</p>
               </a-modal>
-              </span>
+             </span>
             </div>
-
-
           </div>
 
           <div v-else>
@@ -46,7 +53,6 @@
       </a-page-header>
       <br/>
     </a-affix>
-
 
     <!--主页内容-->
     <div>
@@ -132,6 +138,7 @@ import {message} from "ant-design-vue";
 import getCurrentUser from "@/service/getCurrentUser";
 import currentUser from "@/model/currentUser";
 import router from "@/router";
+import {ApiTwoTone, FireTwoTone} from '@ant-design/icons-vue';
 
 const activeKey = ref('1');
 const userInfoList = ref([]);
@@ -173,7 +180,9 @@ const getMatchUserList = () => {
       matchNum: matchNum.value
     }
   }).then((res) => {
-    matchUserList.value = res.data.records;
+    if (res.data !== null) {
+      matchUserList.value = res.data.records;
+    }
   });
 }
 
@@ -227,28 +236,46 @@ const logout = () => {
   visible.value = false;
 };
 
+// 前往博客社区
 const goToBlog = () => {
   router.push("/blog")
+}
+
+// 前往博客社区
+const goToChat = () => {
+  router.push("/chat")
 }
 </script>
 
 <style>
-.demo-page-header{
+.demo-page-header {
   position: relative;
-}
-.demo-page-header::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(5px);
 }
 
-.index {
-  background: #eea2a4;
+.goToPage1, .goToPage2 {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: absolute;
+  top: 32px
+}
+
+.goToPage1 {
+  left: 300px;
+}
+
+.goToPage2 {
+  left: 400px;
+}
+
+.icon {
+  padding-right: 5px;;
+}
+
+.center {
+  background-image: linear-gradient( 135deg, #FF9D6C 10%, #BB4E75 100%);
+  height: 2000px;
 }
 
 .matchUserInfo {

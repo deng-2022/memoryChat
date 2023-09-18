@@ -112,8 +112,6 @@ import {withDefaults, defineProps, ref} from "vue";
 import myAxios from "@/plugins/myAxios";
 import currentUser from "@/model/currentUser";
 import router from "@/router";
-import {onMounted} from "vue/dist/vue";
-import getCurrentUser from "@/service/getCurrentUser";
 
 // 好友列表
 const friendList = ref([]);

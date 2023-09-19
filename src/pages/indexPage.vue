@@ -58,35 +58,45 @@
     <div>
       <a-row :gutter="[16,16]">
         <!--推荐用户列表-->
-        <a-col :span="5" :push="1">
+        <a-col :span="6" :push="1">
           <!--拿到数据-->
           <template v-if="matchUserList && matchUserList.length > 0">
-            <a-card style="width: 240px">
-              <a-card-meta title="每周推荐用户">
+            <a-card style="width: 350px">
+              <template #cover>
+                <img alt="example"
+                     src="https://memory-1318574676.cos.ap-nanjing.myqcloud.com/memory-chat/cat3.jpg?q-sign-algorithm=sha1&q-ak=AKIDzo8ZpFYKWfPX6axc2EpXaU5_2NvVNG7kfAW5SSVKQOoZc1-YCX-LiUkTpRp1wxNL&q-sign-time=1695111586;1695115186&q-key-time=1695111586;1695115186&q-header-list=host&q-url-param-list=ci-process&q-signature=99881b8d77719ea2715dba09a1e5160d2335fb49&x-cos-security-token=DXoTLoexyQSTnI8300hZnzqFbEjlGWvaea4765a47a6fda14bd340eb2e49ff482F6RfKcmKBFpwoA69cRpnxzRU75FL5ObZHv_aISUhoyOIrSHV2TweTYXhCT4JU-fd9s8Bs3IB9-VxHoUa1KUuMfXpX9AbL7wAsrGwvGtXWTHLEebhNpBKC4uumLgHeMRlcRtdTJt8iLzId1lHsD2qlyO5RFouZ7GvMBLwuX3QetW2VuA2_SMbTPxBdmN2Zy-s&ci-process=originImage"/>
+              </template>
+              <a-card-meta title="每周用户推荐">
               </a-card-meta>
-              <a-list
-                  item-layout="horizontal"
-                  :grid="{ gutter: 16, xs: 1, sm: 2, md: 4, lg: 4, xl: 6, xxl: 1 }"
-                  :data-source="matchUserList"
-                  class="userList"
-                  style="width: 200px"
-              >
+              <a-list item-layout="horizontal" :data-source="matchUserList">
                 <template #renderItem="{ item }">
-                  <a-list-item>
-                    <a-card hoverable class="matchUserInfo">
-                      <template #cover>
-                        <img class="matchUserAvatar" alt="example" :src="item.avatarUrl"/>
-                      </template>
+                  <div class="container">
+                    <!--用户头像-->
+                    <div>
+                      <a-avatar :src="item.avatarUrl"/>
+                    </div>
+                    <!--用户昵称 标签-->
+                    <div>
+                      <span>{{ item.username }}</span>
 
-                      <a-card-meta :title=" item.username">
-                        <template #description>{{ item.profile }}</template>
-                      </a-card-meta>
-                    </a-card>
-                  </a-list-item>
+                      <div>
+                        <a-tag color="green">green</a-tag>
+                        <a-tag color="cyan">cyan</a-tag>
+                        <a-tag color="blue">blue</a-tag>
+                        <a-tag color="purple">purple</a-tag>
+                      </div>
+                    </div>
+                    <!--匹配度-->
+                    <div>
+                      <span>
+                        {{ item.percentage }}%
+                      </span>
+                    </div>
+                  </div>
                 </template>
               </a-list>
-            </a-card>
 
+            </a-card>
           </template>
           <!--获取数据失败-->
           <template v-else>
@@ -170,7 +180,7 @@ const getTeamList = (isSecret: any) => {
 }
 
 // 推荐用户数量
-const matchNum = ref(5)
+const matchNum = ref(7)
 // 推荐用户列表
 const matchUserList = ref([]);
 // 获取推荐用户
@@ -274,7 +284,7 @@ const goToChat = () => {
 }
 
 .center {
-  background-image: linear-gradient( 135deg, #FF9D6C 10%, #BB4E75 100%);
+  background-image: linear-gradient(135deg, #FF9D6C 10%, #BB4E75 100%);
   height: 2000px;
 }
 
@@ -285,6 +295,15 @@ const goToChat = () => {
 .infoList {
   width: 180%;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.container div{
+  margin-bottom: 7px;
 }
 </style>
 

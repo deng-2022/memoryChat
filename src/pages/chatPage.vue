@@ -57,6 +57,22 @@
     <div>
       <a-card class="chatList" style="width: 100%;">
         <a-tabs v-model:activeKey="activeKey" tab-position="left" @change="handleTabChange">
+          <a-tab-pane v-model:activeKey="activeKey" :key="currentUserId" tab="文件传输助手"
+                      @click="handleTabChange">
+            <div class="msgWindow">
+              <h1>收发文件，您的得力助手</h1>
+            </div>
+
+
+            <div class="inputWindow">
+              <hr/>
+              <a-input v-model:value="mesInput" placeholder="Basic usage"/>
+              <a-button @click="sendMessage" type="primary">发送消息</a-button>
+              <hr/>
+              <div id="message">{{ retMes }}</div>
+            </div>
+          </a-tab-pane>
+
           <a-tab-pane v-model:activeKey="activeKey" v-for="tab in friendList" :key="tab.id" :tab="tab.username"
                       @click="handleTabChange">
             <div class="chatWindow">
@@ -90,7 +106,7 @@
 </template>
 
 <script setup>
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import currentUser from "@/model/currentUser";
 import myAxios from "@/plugins/myAxios";
 import {useRoute} from 'vue-router';
@@ -109,7 +125,7 @@ let currentUserId = currentUser.value.id;
 let socket;
 
 // tab页 key
-const activeKey = ref(chatTabName.value.chatTabName);
+const activeKey = ref(currentUserId);
 // tab标签列表
 // 消息输入
 const mesInput = ref("");
@@ -126,6 +142,9 @@ const handleTabChange = (key) => {
 
 // 更新消息列表
 const getMesList = (key) => {
+  getCurrentUser();
+  currentUserId = currentUser.value.id;
+
   myAxios.get("/chat/list", {
     params: {
       senderId: currentUserId,
@@ -252,20 +271,26 @@ window.onbeforeunload = function () {
   closeWebSocket();
 };
 
+// 监听 activeKey 的变化，更新存储中的值
+watch(activeKey, (value) => {
+  localStorage.setItem('activeKey', value);
+});
+
 // 钩子函数
 onMounted(() => {
-  getCurrentUser();
-  currentUserId = currentUser.value.id;
+  console.log(localStorage.getItem('activeKey'))
+
   // 主动连接
-  openSocket(currentUser.value.id);
+  openSocket(currentUserId);
   // 获取接收者id
   chatTabName.value = route.query
-  console.log("参数:" + chatTabName.value.chatTabName)
-  activeKey.value = chatTabName.value.chatTabName;
+
+  activeKey.value = localStorage.getItem('activeKey')
+
   // 获取好友列表信息
   chatWindowList();
   // 聊天记录
-  getMesList(chatTabName.value.chatTabName)
+  getMesList(activeKey.value)
 })
 
 // 好友列表
@@ -318,7 +343,7 @@ const goToCenter = () => {
 }
 
 .chat {
-  background-image: linear-gradient( 135deg, #70F570 10%, #49C628 100%);
+  background-image: linear-gradient(135deg, #70F570 10%, #49C628 100%);
   height: 2000px;
 }
 

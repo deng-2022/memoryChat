@@ -56,65 +56,6 @@
 
     <!--主页内容-->
     <div>
-      <a-row :gutter="[16,16]">
-        <!--推荐用户列表-->
-        <a-col :span="5" :push="1">
-          <!--拿到数据-->
-          <template v-if="matchUserList && matchUserList.length > 0">
-            <a-card style="width: 350px">
-              <template #cover>
-                <img alt="example"
-                     src="https://memory-1318574676.cos.ap-nanjing.myqcloud.com/memory-chat/cat3.jpg?q-sign-algorithm=sha1&q-ak=AKIDzo8ZpFYKWfPX6axc2EpXaU5_2NvVNG7kfAW5SSVKQOoZc1-YCX-LiUkTpRp1wxNL&q-sign-time=1695111586;1695115186&q-key-time=1695111586;1695115186&q-header-list=host&q-url-param-list=ci-process&q-signature=99881b8d77719ea2715dba09a1e5160d2335fb49&x-cos-security-token=DXoTLoexyQSTnI8300hZnzqFbEjlGWvaea4765a47a6fda14bd340eb2e49ff482F6RfKcmKBFpwoA69cRpnxzRU75FL5ObZHv_aISUhoyOIrSHV2TweTYXhCT4JU-fd9s8Bs3IB9-VxHoUa1KUuMfXpX9AbL7wAsrGwvGtXWTHLEebhNpBKC4uumLgHeMRlcRtdTJt8iLzId1lHsD2qlyO5RFouZ7GvMBLwuX3QetW2VuA2_SMbTPxBdmN2Zy-s&ci-process=originImage"/>
-              </template>
-              <a-card-meta title="每周用户推荐">
-              </a-card-meta>
-              <a-list item-layout="horizontal" :data-source="matchUserList">
-                <template #renderItem="{ item }">
-                  <div class="container">
-                    <!--用户头像-->
-                    <div>
-                      <a-avatar :src="item.avatarUrl"/>
-                    </div>
-                    <!--用户昵称 标签-->
-                    <div>
-                      <span>{{ item.username }}</span>
-
-                      <div>
-                        <a-tag color="green">green</a-tag>
-                        <a-tag color="cyan">cyan</a-tag>
-                        <a-tag color="blue">blue</a-tag>
-                        <a-tag color="purple">purple</a-tag>
-                      </div>
-                    </div>
-                    <!--匹配度-->
-                    <div>
-                      <span>
-                        {{ item.percentage }}%
-                      </span>
-                    </div>
-                  </div>
-                </template>
-              </a-list>
-
-            </a-card>
-          </template>
-          <!--获取数据失败-->
-          <template v-else>
-            <a-card style="width: 350px">
-              <template #cover>
-                <img alt="example"
-                     src="https://memory-1318574676.cos.ap-nanjing.myqcloud.com/memory-chat/cat3.jpg?q-sign-algorithm=sha1&q-ak=AKIDzo8ZpFYKWfPX6axc2EpXaU5_2NvVNG7kfAW5SSVKQOoZc1-YCX-LiUkTpRp1wxNL&q-sign-time=1695111586;1695115186&q-key-time=1695111586;1695115186&q-header-list=host&q-url-param-list=ci-process&q-signature=99881b8d77719ea2715dba09a1e5160d2335fb49&x-cos-security-token=DXoTLoexyQSTnI8300hZnzqFbEjlGWvaea4765a47a6fda14bd340eb2e49ff482F6RfKcmKBFpwoA69cRpnxzRU75FL5ObZHv_aISUhoyOIrSHV2TweTYXhCT4JU-fd9s8Bs3IB9-VxHoUa1KUuMfXpX9AbL7wAsrGwvGtXWTHLEebhNpBKC4uumLgHeMRlcRtdTJt8iLzId1lHsD2qlyO5RFouZ7GvMBLwuX3QetW2VuA2_SMbTPxBdmN2Zy-s&ci-process=originImage"/>
-              </template>
-              <a-card-meta title="每周用户推荐">
-              </a-card-meta>
-            </a-card>
-
-            <a-empty/>
-          </template>
-        </a-col>
-
-        <!--在线用户列表-->
-        <a-col :span="10">
           <a-card class="infoList">
             <a-tabs v-model:activeKey="activeKey" class="centered-tabs" @change="handleTabChange">
               <!--在线用户列表-->
@@ -138,8 +79,6 @@
               </a-tab-pane>
             </a-tabs>
           </a-card>
-        </a-col>
-      </a-row>
     </div>
   </div>
 
@@ -262,7 +201,11 @@ const goToBlog = () => {
 
 // 前往博客社区
 const goToChat = () => {
-  router.push("/chat")
+  if (!currentUser.value) {
+    message.warning("请先登录")
+  } else {
+    router.push("/chat")
+  }
 }
 </script>
 
@@ -297,24 +240,14 @@ const goToChat = () => {
   height: 2000px;
 }
 
-.matchUserInfo {
-  width: 150px;
-}
 
 .infoList {
-  width: 180%;
+  width: 97%;
+  margin-left: 1%;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
-.container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
 
-.container div {
-  margin-bottom: 7px;
-}
 </style>
 
 

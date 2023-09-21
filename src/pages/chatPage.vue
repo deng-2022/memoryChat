@@ -120,6 +120,7 @@ const chatTabName = ref({});
 // 服务器 消息提示
 const retMes = ref("");
 // 当前登录用户id
+
 let currentUserId = currentUser.value.id;
 // socket
 let socket;
@@ -278,13 +279,11 @@ watch(activeKey, (value) => {
 
 // 钩子函数
 onMounted(() => {
-  console.log(localStorage.getItem('activeKey'))
-
   // 主动连接
   openSocket(currentUserId);
   // 获取接收者id
   chatTabName.value = route.query
-
+  // 记忆选中的Tab标签页
   activeKey.value = localStorage.getItem('activeKey')
 
   // 获取好友列表信息

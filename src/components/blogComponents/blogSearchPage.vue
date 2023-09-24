@@ -54,6 +54,7 @@
       <br/>
     </a-affix>
 
+
     <div style="display: flex">
       <a-card style="width: 70%;margin-left: 1.5%;">
         <a-tabs v-model:activeKey="activeKey" class="centered-tabs" @change="handleTabChange">
@@ -63,8 +64,7 @@
               <template #renderItem="{ item }">
                 <a-list-item>
                   <div class="article">
-                    <!--博文-->
-                    <a-card hoverable @click="goToRead(item.id)">
+                    <a-card hoverable>
                       <!--操作-->
                       <template #actions>
                         <LikeTwoTone style="font-size: 18px" key="like" :twoToneColor="isLiked ? '#ff4d4f' : '#b0c4d8'"
@@ -98,10 +98,7 @@
                         </div>
                         <!--作者信息-->
                         <a-avatar style="position: absolute; top: 150px;left: 25px" size="large"
-                                  :src="item.author.avatarUrl"/>
-                        <div style="position: absolute;top: 160px;left: 80px;">
-                          <a-tag color="green"> {{ item.author.username }}</a-tag>
-                        </div>
+                                  src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>
                         <!--文章配图-->
                         <div style="margin-left: 65%">
                           <img style="width: 300px"
@@ -117,6 +114,27 @@
           </a-tab-pane>
 
           <a-tab-pane key="2" tab="收藏">
+            <a-card hoverable style="width: 300px">
+              <template #cover>
+                <img
+                    alt="example"
+                    src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+                />
+              </template>
+
+              <template #actions>
+                <LikeOutlined key="like"/>
+                <HeartOutlined key="collect"/>
+                <MessageOutlined key="comment"/>
+              </template>
+
+
+              <a-card-meta title="Card title" description="This is the description">
+                <template #avatar>
+                  <a-avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>
+                </template>
+              </a-card-meta>
+            </a-card>
           </a-tab-pane>
 
           <a-tab-pane key="3" tab="关注">
@@ -222,7 +240,7 @@ const handleTabChange = (key: any) => {
 
 // 获取博文列表
 const getArticleList = () => {
-  myAxios.get("/article/list/VO", {
+  myAxios.get("/article/list", {
     params: {
       currentPage: 1,
       pageSize: 5
@@ -273,18 +291,6 @@ const getMatchUserList = () => {
       matchUserList.value = res.data.records;
     }
   });
-}
-
-// 跳转博文详情页
-const goToRead = (id: never) => {
-  // router.push(`/blog/read/${id}`)
-  router.push({
-    name: "blogRead",
-    path: "/blog/read",
-    query: {
-      articleId: id
-    }
-  })
 }
 
 </script>

@@ -87,11 +87,11 @@
 
 <script lang="ts" setup="ts">
 import {ref, watchEffect} from 'vue';
-import UserListPage from "@/components/userListPage.vue";
-import TeamListPage from "@/components/teamListPage.vue";
+import UserListPage from "@/components/userComponents/userListPage.vue";
+import TeamListPage from "@/components/teamComponents/teamListPage.vue";
 import myAxios from "../plugins/myAxios";
 import {onMounted} from "vue";
-import UserInfoPage from "@/components/userInfoPage.vue";
+import UserInfoPage from "@/components/userComponents/userInfoPage.vue";
 import {message} from "ant-design-vue";
 import getCurrentUser from "@/service/getCurrentUser";
 import currentUser from "@/model/currentUser";

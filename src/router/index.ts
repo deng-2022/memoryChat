@@ -17,6 +17,11 @@ const routes: Array<RouteRecordRaw> = [
         name: 'blog',
         component: () => import(/* webpackChunkName: "about" */ '../pages/blogPage.vue')
     },
+    {
+        path: '/blog/search',
+        name: 'blogSearch',
+        component: () => import(/* webpackChunkName: "about" */ '../components/blogSearchPage.vue')
+    },
     // 用户列表页
     {
         path: '/user/list',

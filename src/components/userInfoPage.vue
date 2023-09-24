@@ -1,7 +1,7 @@
 <template>
   <div>
     <!--拿到数据-->
-    <template v-if="currentUser && currentUser.length > 0">
+    <template v-if="currentUser ">
       <a-tabs v-model:activeKey="activeKey" tab-position="left" @change="handleTabChange">
         <a-tab-pane key="1" tab="已加入的队伍">
           <a-list
@@ -16,7 +16,7 @@
                   <a-tag color="success">
                     {{ item.userName }}
                   </a-tag>
-                  <a-button size="large" type="primary" ghost>队内聊天</a-button>
+                  <a-button size="large" type="primary" ghost  @click="goToChatInTeam">队内聊天</a-button>
                 </template>
 
                 <a-list-item-meta
@@ -43,12 +43,20 @@
             <template #renderItem="{ item }">
               <a-list-item>
                 <template #actions>
+                  <!--发布公告-->
+                  <a-button size="large" danger @click="showModal">发布公告</a-button>
+                  <div style="position: relative">
+                    <a-modal v-model:visible="visible" title="队伍公告" @ok="handleOk">
+                      <p>请编辑队伍公告</p>
+                      <a-textarea style="height: 100px"/>
+                    </a-modal>
+                  </div>
                   <!--队长-->
                   <span>队长</span>
                   <a-tag color="success">
                     {{ item.userName }}
                   </a-tag>
-                  <a-button size="large" type="primary" ghost>队内聊天</a-button>
+                  <a-button size="large" type="primary" ghost @click="goToChatInTeam">队内聊天</a-button>
                 </template>
                 <a-list-item-meta
                     :description="item.description"
@@ -113,8 +121,8 @@
       <a-empty
           image="https://gw.alipayobjects.com/mdn/miniapp_social/afts/img/A*pevERLJC9v0AAAAAAAAAAABjAQAAAQ/original"
           :image-style="{
-      height: '60px',
-    }"
+          height: '60px',
+            }"
       >
         <template #description>
       <span style="color: darkcyan">
@@ -132,6 +140,7 @@ import {withDefaults, defineProps, ref} from "vue";
 import myAxios from "@/plugins/myAxios";
 import currentUser from "@/model/currentUser";
 import router from "@/router";
+import {message} from "ant-design-vue";
 
 // 好友列表
 const friendList = ref([]);
@@ -222,6 +231,22 @@ const goToTab = (item: any) => {
 // 跳转登录页
 const goToLogin = () => {
   router.push("user/login")
+}
+
+const visible = ref<boolean>(false);
+
+const showModal = () => {
+  visible.value = true;
+};
+
+const handleOk = (e: MouseEvent) => {
+  message.success("队伍公告发布成功")
+  visible.value = false;
+};
+
+// 队内聊天
+const goToChatInTeam = () => {
+  message.warning("很抱歉，暂不支持该功能")
 }
 
 </script>

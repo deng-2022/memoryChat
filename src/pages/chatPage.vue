@@ -29,7 +29,7 @@
                   <a-avatar size="large"
                             :src="currentUser.avatarUrl"/>
                 </a>
-                <span>{{ currentUser.userAccount }}</span>
+                  <span>{{ currentUser.username }}</span>
               </a-tooltip>
             </span>
 
@@ -54,9 +54,10 @@
       <br/>
     </a-affix>
 
-    <div>
+    <div style="width: 97%; margin-left: 1%;">
       <a-card class="chatList" style="width: 100%;">
         <a-tabs v-model:activeKey="activeKey" tab-position="left" @change="handleTabChange">
+          <!--文件传输助手-->
           <a-tab-pane v-model:activeKey="activeKey" :key="currentUserId" tab="文件传输助手"
                       @click="handleTabChange">
             <div class="msgWindow">
@@ -65,36 +66,54 @@
 
 
             <div class="inputWindow">
-              <hr/>
-              <a-input v-model:value="mesInput" placeholder="Basic usage"/>
-              <a-button @click="sendMessage" type="primary">发送消息</a-button>
-              <hr/>
-              <div id="message">{{ retMes }}</div>
+              <a-divider style="height: 2px; background-color: #7cb305"/>
+              <div>
+                <a-input v-model:value="mesInput" placeholder="Basic usage" size="large" style="width: 90%"
+                         showCount :maxlength="300"/>
+                <a-button @click="sendMessage" type="primary" size="large" style="margin-left: 20px">发送消息
+                </a-button>
+              </div>
             </div>
           </a-tab-pane>
 
+          <!--好友私聊聊天框-->
           <a-tab-pane v-model:activeKey="activeKey" v-for="tab in friendList" :key="tab.id" :tab="tab.username"
                       @click="handleTabChange">
             <div class="chatWindow">
               <div class="msgWindow">
                 <a-list item-layout="horizontal" :data-source="chatMsgList">
                   <template #renderItem="{ item }">
-                    <a-list-item>
-                      <a-list-item-meta
-                          :description="item.content"
-                      >
-                      </a-list-item-meta>
-                    </a-list-item>
+                    <div style="position: relative">
+                      <!--发送者-->
+                      <div style="position: absolute;top: 6px">
+                        <a-avatar size="large" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>
+                      </div>
+                      <div style="margin-left: 24px;font-size: medium">
+                        <a-list-item>
+                          <div style="font-size: smaller">
+                            <!--发送时间-->
+                            <a-list-item-meta :description="item.sendTime">
+                            </a-list-item-meta>
+                          </div>
+                          <!--消息内容-->
+                          {{ item.content }}
+                        </a-list-item>
+                      </div>
+                    </div>
                   </template>
                 </a-list>
               </div>
 
               <div class="inputWindow">
-                <hr/>
-                <a-input v-model:value="mesInput" placeholder="Basic usage"/>
-                <a-button @click="sendMessage" type="primary">发送消息</a-button>
-                <hr/>
-                <div id="message">{{ retMes }}</div>
+                <a-divider style="height: 2px; background-color: #7cb305"/>
+                <div>
+                  <a-input v-model:value="mesInput" placeholder="Basic usage" size="large" style="width: 90%"
+                           showCount :maxlength="300"/>
+                  <a-button @click="sendMessage" type="primary" size="large" style="margin-left: 20px">发送消息
+                  </a-button>
+                </div>
+                <!--测试是否连接成功-->
+                <!--<div id="message">{{ retMes }}</div>-->
               </div>
             </div>
           </a-tab-pane>
@@ -106,30 +125,33 @@
 </template>
 
 <script setup>
-import {onMounted, ref, watch} from "vue";
+import {onMounted, ref, watch, computed} from "vue";
 import currentUser from "@/model/currentUser";
 import myAxios from "@/plugins/myAxios";
 import {useRoute} from 'vue-router';
-import {notification} from "ant-design-vue";
+import {message, notification} from "ant-design-vue";
 import getCurrentUser from "@/service/getCurrentUser";
 import {EyeTwoTone, FireTwoTone} from '@ant-design/icons-vue';
 import router from "@/router";
+
+// 消息输入
+const mesInput = ref("");
+
+// 计算属性，用于校验变量的值是否为空
+const isMesInputEmpty = computed(() => {
+  return mesInput.value === "";
+});
 
 const route = useRoute();
 const chatTabName = ref({});
 // 服务器 消息提示
 const retMes = ref("");
 // 当前登录用户id
-
 let currentUserId = currentUser.value.id;
 // socket
 let socket;
-
 // tab页 key
 const activeKey = ref(currentUserId);
-// tab标签列表
-// 消息输入
-const mesInput = ref("");
 // 聊天记录 消息列表
 const chatMsgList = ref([])
 // 当前通信用户id
@@ -238,6 +260,12 @@ function sendMessage() {
   } else {
     console.log("您的浏览器支持WebSocket");
 
+    // 在需要校验的地方使用 isMesInputEmpty
+    if (isMesInputEmpty.value) {
+      message.warning("发送消息不能为空")
+      return;
+    }
+
     sendMsg.value = JSON.stringify({
       senderId: currentUserId,
       receiverId: chatUser.value,
@@ -254,6 +282,8 @@ function sendMessage() {
     // setMessage(sendMsg.value);
     // 实时更新聊天记录
     getMesList(chatUser.value);
+    message.success("成功发送一条消息")
+    mesInput.value = "";
   }
 }
 
@@ -284,8 +314,11 @@ onMounted(() => {
   // 获取接收者id
   chatTabName.value = route.query
   // 记忆选中的Tab标签页
-  activeKey.value = localStorage.getItem('activeKey')
-
+  if (chatTabName.value === undefined) {
+    activeKey.value = localStorage.getItem('activeKey')
+  } else {
+    activeKey.value = chatTabName.value.chatTabName;
+  }
   // 获取好友列表信息
   chatWindowList();
   // 聊天记录

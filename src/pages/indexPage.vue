@@ -29,7 +29,7 @@
                   <a-avatar size="large"
                             :src="currentUser.avatarUrl"/>
                 </a>
-                <span>{{ currentUser.userAccount }}</span>
+                <span>{{ currentUser.username }}</span>
               </a-tooltip>
             </span>
 
@@ -239,7 +239,6 @@ const goToChat = () => {
   background-image: linear-gradient(135deg, #FF9D6C 10%, #BB4E75 100%);
   height: 2000px;
 }
-
 
 .infoList {
   width: 97%;

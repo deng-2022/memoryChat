@@ -1,6 +1,6 @@
 <template>
-  <div class="articleInfo">
-    <a-affix :offset-top="0">
+  <div class="articleInfo ">
+    <a-affix offset-top="0">
       <!--页头-->
       <a-page-header
           class="demo-page-header"
@@ -54,23 +54,26 @@
       <br/>
     </a-affix>
 
+
     <div style="display: flex;">
-      <div style="  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  align-items: center;">
-        <div>
-          <LikeTwoTone style="font-size: 30px" key="like"/>
+      <a-affix offset-top="10">
+        <!--文章数据-->
+        <div style="display: flex;flex-direction: column;  align-items: center; margin-right: -400px;">
+          <div class="heart-icon">
+            <LikeTwoTone hover style="font-size: 40px;margin-bottom: 18px" key="like"/>
+          </div>
+          <div class="heart-icon">
+            <HeartTwoTone style="font-size: 40px;margin-bottom: 18px" key="collect"/>
+          </div>
+          <div class="heart-icon">
+            <MessageTwoTone style="font-size: 40px" key="comment"/>
+          </div>
         </div>
-        <div>
-          <HeartTwoTone style="font-size: 30px" key="collect"/>
-        </div>
-        <div>
-          <MessageTwoTone style="font-size: 30px" key="comment"/>
-        </div>
-      </div>
+      </a-affix>
+
+
       <!--文章信息-->
-      <a-card style="width: 60%;margin-left: 15%;overflow: auto;height: 1000px">
+      <a-card style="width: 60%;margin-left: 15%; ">
         <!--标题-->
         <h1>{{ articleInfo.title }}</h1>
         <a-card-meta>
@@ -79,62 +82,70 @@
             <div style="font-size: medium">
               <span> <ClockCircleTwoTone/> 创建于 {{ articleInfo.createTime }}</span>
               <span style="margin-left: 12px"> <ClockCircleTwoTone/> 更新于 {{ articleInfo.updateTime }}</span>
-              <span style="margin-left: 12px"> <EyeTwoTone/> 浏览量 </span>
+              <span style="margin-left: 12px"> <EyeTwoTone/> 浏览量 {{ articleInfo.view }}</span>
             </div>
           </template>
         </a-card-meta>
         <!--其他信息-->
         <div style="position: relative">
           <!--文章内容-->
-          <div style="position: absolute; margin-left: 10px;margin-right: 10px; margin-top: 20px;">
-            <div v-html="parsedContent"
-                 style="position: absolute; margin-left: 10px; margin-right: 10px; margin-top: 20px;">
-            </div>
+          <div v-html="parsedContent"
+               style="margin-left: 10px; margin-right: 10px; margin-top: 20px;">
           </div>
         </div>
       </a-card>
 
-      <!--      <a-affix  >-->
-      <!--作者信息-->
-      <a-card class="infoList" style="width: 18%; margin-left: 1.5%;height:250px">
-        <div class="container">
-          <div style="display: flex">
-            <div>
-              <a-avatar style="position: absolute; top: 50px;left: 25px" size="large"
-                        :src="authorInfo.avatarUrl"/>
-            </div>
+      <a-affix offset-top="10">
+        <!--作者信息-->
+        <a-card style="width: 280px; margin-left: 24px;">
+          <div class="container">
+            <div style="display: flex">
+              <div>
+                <a-avatar style="position: absolute; top: 50px;left: 25px" size="large"
+                          :src="authorInfo.avatarUrl"/>
+              </div>
 
-            <div>
-              <a-list-item-meta
-                  :description="authorInfo.email"
-              >
-                <template #title>
-                  <a href="https://www.antdv.com/">{{ authorInfo.username }} </a>
-                </template>
-              </a-list-item-meta>
+              <div>
+                <a-list-item-meta
+                    :description="authorInfo.email"
+                >
+                  <template #title>
+                    <a href="https://www.antdv.com/">{{ authorInfo.username }} </a>
+                  </template>
+                </a-list-item-meta>
+              </div>
+            </div>
+            <div style="display: flex;font-size: larger;margin: 8px 0">
+            <span>
+              <div style="color: dodgerblue;margin-left: 10px">{{ authorInfo.articleNum }}</div>
+              <div><a style="color: black">文章</a></div>
+            </span>
+              <span style="margin-left:50px">
+               <div style="color: dodgerblue;margin-left: 10px">{{ authorInfo.likes }}</div>
+              <div><a style="color: black">获赞</a></div>
+            </span>
+              <span style="margin-left:50px">
+               <div style="color: dodgerblue;margin-left: 10px">{{ authorInfo.fans }}</div>
+              <div><a style="color: black">粉丝</a></div>
+            </span>
+            </div>
+            <div style="margin-top: 5px">
+              <a-button size="large" danger type="primary">
+                关注
+              </a-button>
+              <a-button size="large" type="primary" ghost style="margin-left:50px">私信</a-button>
             </div>
           </div>
-          <div style="display: flex;margin: 15px 0;font-size: larger;">
-            <span><a style="color: black">文章</a></span>
-            <span style="margin-left:50px"><a style="color: black">阅读</a></span>
-            <span style="margin-left:50px"><a style="color: black">粉丝</a></span>
-          </div>
-          <div style="margin-top: 10px">
-            <a-button size="large" danger type="primary">
-              关注
-            </a-button>
-            <a-button size="large" type="primary" ghost style="margin-left:50px">私信</a-button>
-          </div>
-        </div>
-      </a-card>
+        </a-card>
+      </a-affix>
     </div>
-
-    <!--      </a-affix>-->
   </div>
+
+  <a-back-top/>
 </template>
 
 <script lang="ts" setup="ts">
-import {onMounted, ref} from 'vue';
+import {onMounted, ref, watchEffect} from 'vue';
 import currentUser from "@/model/currentUser";
 import myAxios from "@/plugins/myAxios";
 import {
@@ -148,6 +159,12 @@ import {
 import {useRoute} from 'vue-router';
 import MarkdownIt from 'markdown-it';
 
+const show = ref(false);
+
+onMounted(() => {
+  show.value = true;
+});
+// Markdown语法
 const parsedContent = ref()
 
 const articleInfo = ref({});
@@ -160,6 +177,7 @@ articleId.value = route.query.articleId;
 onMounted(() => {
   // 获取文章及作者信息
   getArticle();
+  window.scrollTo(0, 0);
 })
 
 const getArticle = () => {
@@ -183,7 +201,6 @@ const getArticle = () => {
 <style>
 .articleInfo {
   background-image: linear-gradient(-225deg, #AC32E4 0%, #7918F2 48%, #4801FF 100%);
-  height: 2000px;
 }
 
 .container {
@@ -191,6 +208,27 @@ const getArticle = () => {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+}
+
+.heart-icon:hover {
+  color: red;
+  cursor: pointer;
+}
+
+.fade-in-out {
+  animation: fadeInOut 5s;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 </style>
 

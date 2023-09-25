@@ -64,48 +64,65 @@
                 <a-list-item>
                   <div class="article">
                     <!--博文-->
-                    <a-card hoverable @click="goToRead(item.id)">
+                    <a-card hoverable>
                       <!--操作-->
                       <template #actions>
-                        <LikeTwoTone style="font-size: 18px" key="like" :twoToneColor="isLiked ? '#ff4d4f' : '#b0c4d8'"
-                                     @click="toggleLike"/>
+                        <LikeTwoTone style="font-size: 18px" key="like"
+                                     :twoToneColor="item.isLiked ? '#ff4d4f' : '#b0c4d8'"
+                                     @click="toggleLike(item)"/>
+
                         <HeartTwoTone style="font-size: 18px" key="collect"
-                                      :twoToneColor="isLiked ? '#ff4d4f' : '#b0c4d8'"
-                                      @click="toggleLike"/>
+                                      :twoToneColor="item.isCollected ? '#ff4d4f' : '#b0c4d8'"
+                                      @click="toggleCollect(item)"
+                        />
                         <MessageTwoTone style="font-size: 18px" key="comment"
-                                        :twoToneColor="isLiked ? '#ff4d4f' : '#b0c4d8'"
-                                        @click="toggleLike"/>
+                                        :twoToneColor="item.isComment ? '#ff4d4f' : '#b0c4d8'"
+                        />
                       </template>
-                      <!--标题-->
-                      <a-card-meta :title="item.title">
-                        <!--文章信息-->
+                      <div style="position: absolute;left: 195px;top:295px;display: flex">
+                        <div style="margin-right: 330px">
+                          {{ item.comments }}
+                        </div>
+                        <div style="margin-right: 330px">
+                          {{ item.comments }}
+                        </div>
+                        <div>
+                          {{ item.comments }}
+                        </div>
+                      </div>
 
-                        <template #description>
-                          <div style="margin-top: 10px">
-                            <span> <ClockCircleTwoTone/> 创建于 {{ item.createTime }}</span>
-                            <span style="margin-left: 12px"> <ClockCircleTwoTone/> 更新于 {{ item.updateTime }}</span>
-                            <span style="margin-left: 12px"> <EyeTwoTone/> 浏览量 </span>
+                      <div @click="goToRead(item.id)">
+                        <!--标题-->
+                        <a-card-meta :title="item.title">
+                          <!--文章信息-->
+
+                          <template #description>
+                            <div style="margin-top: 10px">
+                              <span> <ClockCircleTwoTone/> 创建于 {{ item.createTime }}</span>
+                              <span style="margin-left: 12px"> <ClockCircleTwoTone/> 更新于 {{ item.updateTime }}</span>
+                              <span style="margin-left: 12px"> <EyeTwoTone/> 浏览量 {{ item.view }}</span>
+                            </div>
+                          </template>
+                        </a-card-meta>
+
+                        <!--其他信息-->
+                        <div style="position: relative">
+                          <!--文章简介-->
+                          <div style="position: absolute;width: 60%;margin-top: 20px">
+                            {{ item.description }} {{ item.description }} {{ item.description }} {{ item.description }}
+                            {{ item.description }} {{ item.description }}
                           </div>
-                        </template>
-                      </a-card-meta>
-
-                      <!--其他信息-->
-                      <div style="position: relative">
-                        <!--文章简介-->
-                        <div style="position: absolute;width: 60%;margin-top: 20px">
-                          {{ item.description }} {{ item.description }} {{ item.description }} {{ item.description }}
-                          {{ item.description }} {{ item.description }}
-                        </div>
-                        <!--作者信息-->
-                        <a-avatar style="position: absolute; top: 150px;left: 25px" size="large"
-                                  :src="item.author.avatarUrl"/>
-                        <div style="position: absolute;top: 160px;left: 80px;">
-                          <a-tag color="green"> {{ item.author.username }}</a-tag>
-                        </div>
-                        <!--文章配图-->
-                        <div style="margin-left: 65%">
-                          <img style="width: 300px"
-                               src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png">
+                          <!--作者信息-->
+                          <a-avatar style="position: absolute; top: 150px;left: 25px" size="large"
+                                    :src="item.author.avatarUrl"/>
+                          <div style="position: absolute;top: 160px;left: 80px;">
+                            <a-tag color="green"> {{ item.author.username }}</a-tag>
+                          </div>
+                          <!--文章配图-->
+                          <div style="margin-left: 65%">
+                            <img style="width: 300px"
+                                 src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png">
+                          </div>
                         </div>
                       </div>
 
@@ -126,55 +143,61 @@
           </a-tab-pane>
         </a-tabs>
       </a-card>
-      <!--每周推荐用户-->
-      <a-card class="infoList" style="width: 26%; margin-left: 1%">
-        <template #cover>
-          <img alt="example"
-               src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
-          >
-        </template>
-        <a-card-meta title="每周用户推荐">
-        </a-card-meta>
-        <!--拿到数据-->
-        <template v-if="matchUserList && matchUserList.length > 0">
-          <a-list item-layout="horizontal" :data-source="matchUserList">
-            <template #renderItem="{ item }">
-              <a-list-item>
-                <div class="container">
-                  <!--用户头像-->
-                  <div>
-                    <a-avatar :src="item.avatarUrl"/>
-                  </div>
-                  <!--用户昵称 标签-->
-                  <div>
-                    <span>{{ item.username }}</span>
 
-                    <div style="padding: 5px 10px">
-                      <a-tag color="green">green</a-tag>
-                      <a-tag color="cyan">cyan</a-tag>
-                      <a-tag color="blue">blue</a-tag>
-                      <a-tag color="purple">purple</a-tag>
+      <a-affix offset-top="10">
+        <!--每周推荐用户-->
+        <a-card style="width: 420px; margin-left: 18px;height: 800px">
+          <template #cover>
+            <img alt="example"
+                 src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png"
+            >
+          </template>
+          <a-card-meta title="每周用户推荐">
+          </a-card-meta>
+          <!--拿到数据-->
+          <template v-if="matchUserList && matchUserList.length > 0">
+            <a-list item-layout="horizontal" :data-source="matchUserList">
+              <template #renderItem="{ item }">
+                <a-list-item>
+                  <div class="container">
+                    <!--用户头像-->
+                    <div>
+                      <a-avatar :src="item.avatarUrl"/>
                     </div>
-                  </div>
-                  <!--匹配度-->
-                  <div>
+                    <!--用户昵称 标签-->
+                    <div>
+                      <span>{{ item.username }}</span>
+
+                      <div style="padding: 5px 10px">
+                        <a-tag color="green">green</a-tag>
+                        <a-tag color="cyan">cyan</a-tag>
+                        <a-tag color="blue">blue</a-tag>
+                        <a-tag color="purple">purple</a-tag>
+                      </div>
+                    </div>
+                    <!--匹配度-->
+                    <div>
                       <span>
                         {{ item.percentage }}%
                       </span>
+                    </div>
                   </div>
-                </div>
-              </a-list-item>
-            </template>
-          </a-list>
-        </template>
+                </a-list-item>
+              </template>
+            </a-list>
+          </template>
 
-        <!--获取数据失败-->
-        <template v-else>
-          <a-empty/>
-        </template>
-      </a-card>
+          <!--获取数据失败-->
+          <template v-else>
+            <a-empty/>
+          </template>
+        </a-card>
+      </a-affix>
+
     </div>
   </div>
+
+  <a-back-top/>
 </template>
 
 <script lang="ts" setup="ts">
@@ -193,9 +216,23 @@ import {
 } from '@ant-design/icons-vue';
 import {message} from "ant-design-vue";
 
-const isLiked = ref(false)
-const toggleLike = () => {
-  isLiked.value = !isLiked.value;
+// 点赞
+const toggleLike = (item) => {
+  item.isLiked = !item.isLiked
+  if (item.isLiked) {
+    message.success("点赞成功")
+  } else {
+    message.success("已取消点赞")
+  }
+}
+// 收藏
+const toggleCollect = (item) => {
+  item.isCollected = !item.isCollected
+  if (item.isCollected) {
+    message.success("收藏成功")
+  } else {
+    message.success("已取消收藏")
+  }
 }
 
 const activeKey = ref('1');
@@ -229,7 +266,14 @@ const getArticleList = () => {
     }
   }).then((res) => {
     if (res.data !== null) {
-      articleList.value = res.data.records;
+      articleList.value = res.data.records.map((article: any) => {
+        return {
+          ...article,
+          isLiked: false,
+          isCollected: false,
+          isComment: false
+        };
+      });
     }
   });
 }
@@ -259,7 +303,7 @@ const goToChat = () => {
 }
 
 // 推荐用户数量
-const matchNum = ref(7)
+const matchNum = ref(5)
 // 推荐用户列表
 const matchUserList = ref([]);
 // 获取推荐用户
@@ -317,7 +361,6 @@ const goToRead = (id: never) => {
 
 .blog {
   background-image: linear-gradient(135deg, #52E5E7 10%, #130CB7 100%);
-  height: 2000px;
 }
 
 .container {

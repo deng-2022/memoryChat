@@ -36,29 +36,40 @@
                 :after-visible-change="afterVisibleChange"
             >
               <a-card>
+                <div>
+                  <van-notice-bar
+                      left-icon="volume-o"
+                      text="盛年不重来，一日难再晨。及时当勉励，岁月不待人。"
+                  />
+                </div>
                 <!--队伍名片-->
                 <template #cover>
                   <img alt="example" :src="item.avatarUrl"/>
                 </template>
                 <!--队伍名 队伍介绍-->
                 <a-card-meta>
-                  <template #description>{{ item.description }}</template>
+                  <template #description>
+                    <div style="margin-bottom: 20px">{{ item.profile }}</div>
+                  </template>
                 </a-card-meta>
                 <!--队伍成员-->
                 <div>
                   <a-avatar-group>
                     <a-space :size="space">
-                      <a-avatar src="https://deng-2022.gitee.io/blog/img/%E5%9B%9E%E5%BF%86%E5%A6%82%E5%88%9D.jpg"/>
-                      <a-avatar src="https://deng-2022.gitee.io/blog/img/%E5%9B%9E%E5%BF%86%E5%A6%82%E5%88%9D.jpg"/>
-                      <a-avatar src="https://deng-2022.gitee.io/blog/img/%E5%9B%9E%E5%BF%86%E5%A6%82%E5%88%9D.jpg"/>
-                      <a-avatar src="https://deng-2022.gitee.io/blog/img/%E5%9B%9E%E5%BF%86%E5%A6%82%E5%88%9D.jpg"/>
+                      <a-tag color="orange">orange</a-tag>
+                      <a-tag color="green">green</a-tag>
+                      <a-tag color="cyan">cyan</a-tag>
+                      <a-tag color="blue">blue</a-tag>
+                      <a-tag color="purple">purple</a-tag>
                     </a-space>
                   </a-avatar-group>
                 </div>
               </a-card>
               <!--加入队伍-->
               <a-space :size="120">
-                <a-button size="large" type="primary" ghost @click="addFriends(item)">加好友</a-button>
+                <a-button size="large" type="primary" danger @click="addFriends(item)" style="margin-left: 24px">
+                  加好友
+                </a-button>
                 <a-button size="large" type="primary" ghost>聊天</a-button>
               </a-space>
             </a-drawer>

@@ -75,18 +75,18 @@
                                       :twoToneColor="item.isCollected ? '#ff4d4f' : '#b0c4d8'"
                                       @click="toggleCollect(item)"
                         />
-                        <MessageTwoTone style="font-size: 18px" key="comment"
+                        <MessageTwoTone @click="goToRead(item.id)" style="font-size: 18px" key="comment"
                                         :twoToneColor="item.isComment ? '#ff4d4f' : '#b0c4d8'"
                         />
                       </template>
-                      <div style="position: absolute;left: 195px;top:295px;display: flex">
-                        <div style="margin-right: 330px">
-                          {{ item.comments }}
+                      <div style="position: absolute;left: 195px;top:297px;display: flex">
+                        <div style="margin-right: 335px">
+                          {{ item.likes }}
                         </div>
-                        <div style="margin-right: 330px">
-                          {{ item.comments }}
+                        <div style="margin-right: 335px">
+                          {{ item.collects }}
                         </div>
-                        <div>
+                        <div >
                           {{ item.comments }}
                         </div>
                       </div>
@@ -118,14 +118,18 @@
                           <div style="position: absolute;top: 160px;left: 80px;">
                             <a-tag color="green"> {{ item.author.username }}</a-tag>
                           </div>
+                          <div style="position: absolute;top: 160px;left: 300px">
+                            <a-tag color="orange">orange</a-tag>
+                            <a-tag color="green">green</a-tag>
+                            <a-tag color="cyan">cyan</a-tag>
+                            <a-tag color="blue">blue</a-tag>
+                          </div>
                           <!--文章配图-->
                           <div style="margin-left: 65%">
-                            <img style="width: 300px"
-                                 src="https://gw.alipayobjects.com/zos/rmsportal/JiqGstEfoWAOHiTxclqi.png">
+                            <img style="width: 300px" :src="item.articleUrl">
                           </div>
                         </div>
                       </div>
-
                     </a-card>
                   </div>
                 </a-list-item>
@@ -134,6 +138,43 @@
           </a-tab-pane>
 
           <a-tab-pane key="2" tab="收藏">
+            <a-list
+                class="demo-loadmore-list"
+                item-layout="horizontal"
+                :data-source="articleList"
+            >
+              <template #renderItem="{ item }">
+                <a-list-item>
+                  <!--文章操作-->
+                  <template #actions>
+                    <a @click="goToRead(item.id)">查看</a>
+                    <a>删除</a>
+                  </template>
+
+                  <a-list-item-meta
+                      :description="item.description"
+                  >
+                    <template #title>
+                      <a @click="goToRead(item.id)">{{ item.title }}</a>
+                    </template>
+
+                  </a-list-item-meta>
+
+                  <!--文章标签-->
+                  <div style="position: absolute;left: 520px; ">
+                    <a-tag color="orange">orange</a-tag>
+                    <a-tag color="green">green</a-tag>
+                    <a-tag color="cyan">cyan</a-tag>
+                    <a-tag color="blue">blue</a-tag>
+                  </div>
+
+                  <div style="position:absolute; margin-left: 70%">
+                    <!--文章配图-->
+                    <img style="width: 120px" :src="item.articleUrl">
+                  </div>
+                </a-list-item>
+              </template>
+            </a-list>
           </a-tab-pane>
 
           <a-tab-pane key="3" tab="关注">
@@ -177,9 +218,7 @@
                     </div>
                     <!--匹配度-->
                     <div>
-                      <span>
-                        {{ item.percentage }}%
-                      </span>
+                      <a-progress type="circle" :percent="item.percentage" :width="50" />
                     </div>
                   </div>
                 </a-list-item>

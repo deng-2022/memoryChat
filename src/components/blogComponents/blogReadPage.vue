@@ -73,27 +73,68 @@
 
 
       <!--文章信息-->
-      <a-card style="width: 60%;margin-left: 15%; ">
-        <!--标题-->
-        <h1>{{ articleInfo.title }}</h1>
-        <a-card-meta>
-          <!--文章信息-->
-          <template #description>
-            <div style="font-size: medium">
-              <span> <ClockCircleTwoTone/> 创建于 {{ articleInfo.createTime }}</span>
-              <span style="margin-left: 12px"> <ClockCircleTwoTone/> 更新于 {{ articleInfo.updateTime }}</span>
-              <span style="margin-left: 12px"> <EyeTwoTone/> 浏览量 {{ articleInfo.view }}</span>
-            </div>
-          </template>
-        </a-card-meta>
-        <!--其他信息-->
-        <div style="position: relative">
-          <!--文章内容-->
-          <div v-html="parsedContent"
-               style="margin-left: 10px; margin-right: 10px; margin-top: 20px;">
+      <div style="width: 60%;margin-left: 15%;  min-height: 85vh;margin-bottom: 20px">
+        <!--正文-->
+        <a-card>
+          <!--标题-->
+          <h1>{{ articleInfo.title }}</h1>
+          <div style="position: absolute;top:102px;left: 600px">
+            <a-tag color="orange">orange</a-tag>
+            <a-tag color="green">green</a-tag>
+            <a-tag color="cyan">cyan</a-tag>
+            <a-tag color="blue">blue</a-tag>
           </div>
-        </div>
-      </a-card>
+          <a-card-meta>
+            <!--文章信息-->
+            <template #description>
+              <div style="font-size: medium">
+                <span> <ClockCircleTwoTone/> 创建于 {{ articleInfo.createTime }}</span>
+                <span style="margin-left: 12px"> <ClockCircleTwoTone/> 更新于 {{ articleInfo.updateTime }}</span>
+                <span style="margin-left: 12px"> <EyeTwoTone/> 浏览量 {{ articleInfo.view }}</span>
+              </div>
+            </template>
+          </a-card-meta>
+          <!--其他信息-->
+          <div style="position: relative">
+            <!--文章内容-->
+            <div v-html="parsedContent"
+                 style="margin-left: 10px; margin-right: 10px; margin-top: 20px;">
+            </div>
+          </div>
+        </a-card>
+
+        <!--评论区-->
+        <a-card style="margin-top: 30px">
+          <template #title>评论区</template>
+          <a-list
+              class="comment-list"
+              :header="`${data.length} replies`"
+              item-layout="horizontal"
+              :data-source="data"
+          >
+            <template #renderItem="{ item }">
+              <a-list-item>
+                <a-comment :author="item.author" :avatar="item.avatar">
+                  <template #actions>
+                    <span v-for="(action, index) in item.actions" :key="index">{{ action }}</span>
+                  </template>
+                  <template #content>
+                    <p>
+                      {{ item.content }}
+                    </p>
+                  </template>
+                  <template #datetime>
+                    <a-tooltip :title="item.datetime.format('YYYY-MM-DD HH:mm:ss')">
+                      <span>{{ item.datetime.fromNow() }}</span>
+                    </a-tooltip>
+                  </template>
+                </a-comment>
+              </a-list-item>
+            </template>
+          </a-list>
+        </a-card>
+      </div>
+
 
       <a-affix offset-top="10">
         <!--作者信息-->
@@ -195,6 +236,28 @@ const getArticle = () => {
     console.log("获取文章信息失败")
   });
 }
+
+import moment from 'moment';
+
+const data = [
+  {
+    actions: ['Reply to'],
+    author: 'Han Solo',
+    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+    content:
+        'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
+    datetime: moment().subtract(1, 'days'),
+  },
+  {
+    actions: ['Reply to'],
+    author: 'Han Solo',
+    avatar: 'https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png',
+    content:
+        'We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.',
+    datetime: moment().subtract(2, 'days'),
+  },
+]
+moment();
 
 </script>
 

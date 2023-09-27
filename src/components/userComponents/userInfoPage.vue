@@ -136,7 +136,7 @@
 </template>
 
 <script setup lang="ts">
-import {withDefaults, defineProps, ref} from "vue";
+import {withDefaults, defineProps, ref, onMounted} from "vue";
 import myAxios from "@/plugins/myAxios";
 import currentUser from "@/model/currentUser";
 import router from "@/router";
@@ -215,7 +215,12 @@ const getJoinedTeam = () => {
   });
 };
 
+// 默认选中已加入的队伍
 const activeKey = ref('1');
+// 直接查询已加入的队伍
+onMounted(()=>{
+  getJoinedTeam();
+})
 
 // 监听页面变化
 const goToTab = (item: any) => {

@@ -18,7 +18,7 @@
               </a-card-meta>
 
               <div>
-                <a-slider id="test" v-model:value="item.joinNum" :max="item.maxNum" disabled/>
+                <a-progress :percent="(item.joinNum / item.maxNum * 100).toFixed(2)" size="small" status="active"/>
                 <span>{{ item.joinNum }}/{{ item.maxNum }}</span>
               </div>
               <!--队伍状态-->
@@ -41,7 +41,22 @@
                 v-model:visible="visible[item.id]"
                 :after-visible-change="afterVisibleChange"
             >
-              <a-card>
+              <a-card style="margin-top: 60px">
+                <!--群公告-->
+                <div class="alert">
+                  <div @click="info(item.announcement)">
+                    <a-tooltip>
+                      <template #title>点击查看详细公告内容</template>
+                      <a-alert
+                          show-icon
+                          type="info"
+                          :closable="false"
+                          message="该队伍已发布新的队伍公告！"
+                          style="width: 330px;cursor: pointer"
+                      />
+                    </a-tooltip>
+                  </div>
+                </div>
                 <!--队伍名片-->
                 <template #cover>
                   <img alt="example" :src="item.imgUrl"/>
@@ -76,21 +91,31 @@
                   </a-tag>
                 </div>
               </a-card>
+
               <!--加入队伍-->
               <a-space :size="120" style="margin-left: 10px;margin-top: 10px">
-                <a-button size="large" type="primary" ghost @click="joinTeam(item)">申请加入</a-button>
+                <a-button size="large" type="primary" ghost @click="showConfirmModal">申请加入</a-button>
                 <a-button size="large" type="primary" ghost>队伍聊天</a-button>
               </a-space>
 
               <div v-if="item.userId === currentUser.id">
 
               </div>
-
-              <a-modal v-model:visible="vis" title="提示" @ok="handleOk" @close="onCloseModal">
+              <!--申请加密队伍确认框-->
+              <a-modal v-model:visible="vis" title="提示" @ok="handleOk(item)" @close="onCloseModal">
                 <p>申请加密队伍, 需要输入密码</p>
                 <a-input placeholder="请输入密码" v-model:value="teamPassword">
                 </a-input>
               </a-modal>
+              <!--申请队伍确认框-->
+              <a-modal
+                  title="提示"
+                  v-model:visible="joinedConfirm"
+                  @ok="goToJoined(item)"
+              >
+                <p> 你确认要申请加入这个队伍吗？</p>
+              </a-modal>
+
             </a-drawer>
           </a-list-item>
         </template>
@@ -102,9 +127,10 @@
 <script setup lang="ts">
 import {withDefaults, defineProps, ref} from "vue";
 import myAxios from "@/plugins/myAxios";
-import TeamInfo from "@/type/teamInfo";
-import {message} from "ant-design-vue";
+import {message, Modal} from "ant-design-vue";
 import currentUser from "@/model/currentUser";
+import {h} from 'vue';
+
 
 interface Props {
   teamInfoList: any[];
@@ -128,32 +154,62 @@ const afterVisibleChange = (bool: boolean) => {
 const space = ref("4px");
 
 // 申请加入队伍
-const joinTeam = (teamInfo: TeamInfo) => {
+const joinTeam = (teamInfo: any) => {
   if (teamInfo.status === 2) {
     showModal();
+  } else {
+    myAxios.post("/team/join", teamInfo).then((res) => {
+      message.success("申请入队成功")
+    }).catch(() => {
+      console.log("加入失败")
+    });
   }
-
-  myAxios.post("/team/join", teamInfo).then((res) => {
-    message.success("申请入队成功")
-  }).catch(() => {
-    console.log("加入失败")
-  });
 };
 
-// 弹窗
+// 申请弹窗
 const vis = ref<boolean>(false);
 
 const showModal = () => {
   vis.value = true;
 };
 
-const handleOk = (e: MouseEvent) => {
-  console.log(e);
+// 确认
+const handleOk = (teamInfo: any) => {
   vis.value = false;
+
+  myAxios.post("/team/join", teamInfo)
+      .then(() => {
+        message.success("申请入队成功")
+      }).catch(() => {
+    console.log("加入失败")
+  });
 };
 
 const teamPassword = ref("");
+// 公告栏
+const info = (announcement: any) => {
+  Modal.info({
+    title: () => '公告',
+    content: () => h('div', {}, [
+      h('p', `${announcement}`),
+    ]),
+    onOk() {
+      console.log('ok');
+    },
+  });
+};
 
+// 确认申请弹窗
+const joinedConfirm = ref<boolean>(false);
+// 展示确认申请弹窗
+const showConfirmModal = () => {
+  joinedConfirm.value = true;
+};
+// 确定
+const goToJoined = (teamInfo: any) => {
+  joinedConfirm.value = false;
+  joinTeam(teamInfo);
+};
 </script>
 
 <style>
@@ -161,5 +217,14 @@ const teamPassword = ref("");
   position: relative;
   width: 250px;
   height: 350px;
+}
+
+.alert {
+  position: absolute;
+  top: -70px;
+  right: 0;
+  white-space: nowrap; /* 强制文本在一行显示 */
+  overflow: hidden; /* 隐藏溢出的文本 */
+  text-overflow: ellipsis; /* 使用省略号表示溢出的文本 */
 }
 </style>

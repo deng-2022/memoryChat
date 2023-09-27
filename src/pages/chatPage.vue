@@ -83,10 +83,10 @@
               <div class="msgWindow">
                 <a-list item-layout="horizontal" :data-source="chatMsgList">
                   <template #renderItem="{ item }">
-                    <div style="position: relative">
+                    <div :class="messageClass(item.senderId)">
                       <!--发送者-->
                       <div style="position: absolute;top: 6px">
-                        <a-avatar size="large" src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"/>
+                        <a-avatar size="large" :src="currentUser.avatarUrl"/>
                       </div>
                       <div style="margin-left: 24px;font-size: medium">
                         <a-list-item>
@@ -309,6 +309,7 @@ watch(activeKey, (value) => {
 
 // 钩子函数
 onMounted(() => {
+  message.info('您已进入聊天大厅，祝您聊天愉快！');
   // 主动连接
   openSocket(currentUserId);
   // 获取接收者id
@@ -345,6 +346,15 @@ const goToBlog = () => {
 // 前往用户中心
 const goToCenter = () => {
   router.push("/")
+}
+
+// 动态变换收发双方消息气泡
+const messageClass = (senderId) => {
+  if (currentUserId === senderId) {
+    return 'senderMsg';  // 如果当前用户的ID等于消息发送者的ID，
+  } else {
+    return 'receiverMsg';  // 其他情况返回空字符串
+  }
 }
 </script>
 
@@ -385,6 +395,20 @@ const goToCenter = () => {
 
 .msgWindow {
   overflow-y: scroll;
+  overflow-x: hidden;
   height: 600px;
+}
+
+.senderMsg {
+  position: relative;
+  left: 1150px
+}
+
+.receiverMsg {
+  position: relative;
+}
+
+.receiverMsg {
+  position: relative;
 }
 </style>

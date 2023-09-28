@@ -16,7 +16,7 @@
                   <a-tag color="success">
                     {{ item.userName }}
                   </a-tag>
-                  <a-button size="large" type="primary" ghost  @click="goToChatInTeam">队内聊天</a-button>
+                  <a-button size="large" type="primary" ghost @click="goToChatInTeam">队内聊天</a-button>
                 </template>
 
                 <a-list-item-meta
@@ -44,11 +44,11 @@
               <a-list-item>
                 <template #actions>
                   <!--发布公告-->
-                  <a-button size="large" danger @click="showModal">发布公告</a-button>
+                  <a-button size="large" danger @click="showModal(item)">发布公告</a-button>
                   <div style="position: relative">
-                    <a-modal v-model:visible="visible" title="队伍公告" @ok="handleOk">
+                    <a-modal v-model:visible="item.showEditWindow" title="队伍公告" @ok="updateAnnouncement(item)">
                       <p>请编辑队伍公告</p>
-                      <a-textarea style="height: 100px"/>
+                      <a-textarea v-model:value="announcement" style="height: 100px"/>
                     </a-modal>
                   </div>
                   <!--队长-->
@@ -58,6 +58,7 @@
                   </a-tag>
                   <a-button size="large" type="primary" ghost @click="goToChatInTeam">队内聊天</a-button>
                 </template>
+
                 <a-list-item-meta
                     :description="item.description"
                 >
@@ -196,7 +197,12 @@ const getCreatedTeam = () => {
       "loginUserId": userId
     }
   }).then((res) => {
-    createdTeamList.value = res.data.records;
+    createdTeamList.value = res.data.records.map((team: any) => {
+      return {
+        ...team,
+        showEditWindow: false
+      };
+    });
   }).catch(() => {
     console.log("加入失败")
   });
@@ -218,7 +224,7 @@ const getJoinedTeam = () => {
 // 默认选中已加入的队伍
 const activeKey = ref('1');
 // 直接查询已加入的队伍
-onMounted(()=>{
+onMounted(() => {
   getJoinedTeam();
 })
 
@@ -238,21 +244,32 @@ const goToLogin = () => {
   router.push("user/login")
 }
 
-const visible = ref<boolean>(false);
-
-const showModal = () => {
-  visible.value = true;
-};
-
-const handleOk = (e: MouseEvent) => {
-  message.success("队伍公告发布成功")
-  visible.value = false;
-};
-
 // 队内聊天
 const goToChatInTeam = () => {
   message.warning("很抱歉，暂不支持该功能")
 }
+
+// 公告内容
+const announcement = ref("");
+
+// 公告弹窗
+const showModal = (team: any) => {
+  team.showEditWindow = true;
+};
+
+// 更新队伍公告
+const updateAnnouncement = (team: any) => {
+  myAxios.post("/team//update/announcement", {
+    userId: userId,
+    teamId: team.id,
+    announcement: announcement.value,
+  }).then(() => {
+    message.success("队伍公告发布成功")
+  }).catch(() => {
+    message.error("队伍公告发布失败")
+  });
+  team.showEditWindow = false;
+};
 
 </script>
 

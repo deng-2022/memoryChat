@@ -1,5 +1,5 @@
 <template>
-  <div class="chat">
+  <div class="chat my-component">
     <a-affix :offset-top="0">
       <!--页头-->
       <a-page-header
@@ -309,6 +309,9 @@ watch(activeKey, (value) => {
 
 // 钩子函数
 onMounted(() => {
+  const el = document.querySelector('.my-component');
+  el.classList.add('fade-in-out');
+
   message.info('您已进入聊天大厅，祝您聊天愉快！');
   // 主动连接
   openSocket(currentUserId);
@@ -410,5 +413,21 @@ const messageClass = (senderId) => {
 
 .receiverMsg {
   position: relative;
+}
+
+.fade-in-out {
+  animation: fadeInOut 5s;
+}
+
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 </style>

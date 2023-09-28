@@ -54,12 +54,15 @@
       <br/>
     </a-affix>
 
-    <div style="display: flex">
-      <a-card style="width: 70%;margin-left: 1.5%;">
+    <div style="display: flex;">
+      <a-card style="width: 70%;margin-left: 1.5%;margin-bottom: 20px">
         <a-tabs v-model:activeKey="activeKey" class="centered-tabs" @change="handleTabChange">
           <!--博文列表-->
           <a-tab-pane key="1" tab="博文">
-            <a-list item-layout="horizontal" :data-source="articleList">
+            <a-list
+                item-layout="horizontal"
+                :data-source="articleList">
+
               <template #renderItem="{ item }">
                 <a-list-item>
                   <div class="article">
@@ -86,7 +89,7 @@
                         <div style="margin-right: 335px">
                           {{ item.collects }}
                         </div>
-                        <div >
+                        <div>
                           {{ item.comments }}
                         </div>
                       </div>
@@ -218,7 +221,7 @@
                     </div>
                     <!--匹配度-->
                     <div>
-                      <a-progress type="circle" :percent="item.percentage" :width="50" />
+                      <a-progress type="circle" :percent="item.percentage" :width="50"/>
                     </div>
                   </div>
                 </a-list-item>
@@ -319,6 +322,7 @@ const getArticleList = () => {
 
 // 钩子函数
 onMounted(() => {
+  message.info('欢迎进入博文社区，祝您学习愉快！')
   // 当前登录用户信息
   getCurrentUser();
   // 获取博文列表
@@ -417,7 +421,6 @@ const goToRead = (id: never) => {
   margin-bottom: 30px;
   box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
-
 
 /*.infoList {*/
 /*  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);*/

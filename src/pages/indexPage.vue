@@ -157,6 +157,7 @@ const handleTabChange = (key: any) => {
 
 // 钩子函数
 onMounted(() => {
+  message.info('欢迎进入用户中心，寻找属于您的伙伴和队伍！')
   // 用户列表
   getUserList();
   // 当前登录用户信息

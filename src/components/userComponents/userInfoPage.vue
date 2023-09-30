@@ -112,8 +112,24 @@
             </template>
           </a-list>
         </a-tab-pane>
-        <a-tab-pane key="4" tab="我的博客">我的博客</a-tab-pane>
-        <a-tab-pane key="5" tab="收藏博客">收藏博客</a-tab-pane>
+        <a-tab-pane key="4" tab="个人信息">
+          <a-card hoverable class="userInfo">
+            <template #cover>
+              <img alt="example" :src="currentUser.avatarUrl"/>
+            </template>
+
+            <a-card-meta :title=" currentUser.username">
+              <template #description>{{ currentUser.profile }}</template>
+            </a-card-meta>
+
+            <div>
+              <a-tag color="green">green</a-tag>
+              <a-tag color="cyan">cyan</a-tag>
+              <a-tag color="blue">blue</a-tag>
+              <a-tag color="purple">purple</a-tag>
+            </div>
+          </a-card>
+        </a-tab-pane>
       </a-tabs>
     </template>
 

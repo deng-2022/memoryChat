@@ -197,6 +197,7 @@
             >
           </template>
           <a-card-meta title="每周用户推荐">
+
           </a-card-meta>
           <!--拿到数据-->
           <template v-if="matchUserList && matchUserList.length > 0">
@@ -220,8 +221,9 @@
                       </div>
                     </div>
                     <!--匹配度-->
-                    <div>
-                      <a-progress type="circle" :percent="item.percentage" :width="50"/>
+                    <div style="width: 20px">
+<!--                      <a-progress type="circle"  :percent="item.percentage"  />-->
+                      {{item.percentage}}%
                     </div>
                   </div>
                 </a-list-item>

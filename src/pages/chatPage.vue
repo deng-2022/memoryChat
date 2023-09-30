@@ -1,5 +1,5 @@
 <template>
-  <div class="chat my-component">
+  <div class="chat">
     <a-affix :offset-top="0">
       <!--页头-->
       <a-page-header
@@ -70,7 +70,8 @@
               <div>
                 <a-input v-model:value="mesInput" placeholder="Basic usage" size="large" style="width: 90%"
                          showCount :maxlength="300"/>
-                <a-button @click="sendMessage" type="primary" size="large" style="margin-left: 20px">发送消息
+                <a-button @click="sendMessage" type="primary" size="large" style="margin-left: 20px">
+                  发送消息
                 </a-button>
               </div>
             </div>
@@ -82,11 +83,16 @@
             <div class="chatWindow">
               <div class="msgWindow">
                 <a-list item-layout="horizontal" :data-source="chatMsgList">
-                  <template #renderItem="{ item }">
-                    <div :class="messageClass(item.senderId)">
+                  <template #renderItem="{ item } ">
+                    <div :class="messageClass(item.senderId)" style="margin-bottom: 10px">
                       <!--发送者-->
-                      <div style="position: absolute;top: 6px">
-                        <a-avatar size="large" :src="currentUser.avatarUrl"/>
+                      <div class="sender">
+                        <div style="position: absolute;">
+                          {{item.username}}
+                        </div>
+                        <div style="position: absolute;top: 24px">
+                          <a-avatar size="large" :src="item.avatarUrl"/>
+                        </div>
                       </div>
                       <div style="margin-left: 24px;font-size: medium">
                         <a-list-item>
@@ -221,6 +227,7 @@ function openSocket(Id) {
       // 是发给自己的消息 更新聊天记录
       if (currentUserId === receiveMsg.value.receiverId) {
         openNotification()
+        // 刷新聊天记录
         getMesList(chatUser.value);
       }
     };
@@ -309,9 +316,6 @@ watch(activeKey, (value) => {
 
 // 钩子函数
 onMounted(() => {
-  const el = document.querySelector('.my-component');
-  el.classList.add('fade-in-out');
-
   message.info('您已进入聊天大厅，祝您聊天愉快！');
   // 主动连接
   openSocket(currentUserId);
@@ -404,15 +408,24 @@ const messageClass = (senderId) => {
 
 .senderMsg {
   position: relative;
-  left: 1150px
+  left: 1110px;
+  color: forestgreen;
+}
+
+.senderMsg .sender {
+  position: relative;
+  left: 180px;
 }
 
 .receiverMsg {
   position: relative;
+  left: 20px;
+  color: dodgerblue
 }
 
-.receiverMsg {
+.receiverMsg .sender {
   position: relative;
+  right: 12px
 }
 
 .fade-in-out {
